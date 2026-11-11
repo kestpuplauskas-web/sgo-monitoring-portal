@@ -5,8 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Empty, PageBody, PageHeader, Panel, Stat } from "@/components/admin/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/analitika")({
+  head: () => ({ meta: [
+    { title: "Puslapio analitika | SGO administravimas" },
+    { name: "description", content: "Puslapio analitika SGO valdymo sistemoje." },
+    { property: "og:title", content: "Puslapio analitika | SGO" },
+    { property: "og:description", content: "Puslapio analitika SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: AnalyticsPage,
 });
 
@@ -99,20 +109,20 @@ function AnalyticsPage() {
         actions={
           <div className="flex rounded-full border border-border p-1" role="group" aria-label="Laikotarpis">
             {[7, 30, 90].map((d) => (
-              <button
+              <Button variant="ghost"
                 key={d}
                 onClick={() => setDays(d)}
                 aria-pressed={days === d}
-                className={cn("min-h-9 rounded-full px-4 text-sm", days === d ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+                className={cn("min-h-11 rounded-full px-4 text-sm", days === d ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
               >
                 {d} d.
-              </button>
+              </Button>
             ))}
           </div>
         }
       />
       <PageBody className="grid gap-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
           <Stat label="Lankytojai" value={data.isLoading ? "…" : s.visitors} hint="Unikalūs per laikotarpį" />
           <Stat label="Peržiūros" value={data.isLoading ? "…" : s.views} hint="Atidaryti puslapiai" />
           <Stat label="Planų užsakymai" value={data.isLoading ? "…" : orders} />
@@ -129,7 +139,7 @@ function AnalyticsPage() {
               <p className="text-sm font-semibold">Peržiūros per dieną</p>
               <div className="mt-4 flex h-48 items-end gap-[3px]" role="img" aria-label="Peržiūrų per dieną grafikas">
                 {s.byDay.map(([d, v]) => (
-                  <div key={d} className="group relative flex-1">
+                  <div key={d} className="group relative min-w-0 flex-1">
                     <div className="w-full rounded-t bg-primary/70 group-hover:bg-primary" style={{ height: `${Math.max(2, (v / max) * 180)}px` }} />
                     <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-popover px-2 py-1 text-xs group-hover:block">
                       {d.slice(5).replace("-", "-")}: {v}
@@ -161,7 +171,7 @@ function TopList({ title, items }: { title: string; items: [string, number][] })
       <ul className="mt-4 grid gap-3">
         {items.map(([k, v]) => (
           <li key={k} className="text-sm">
-            <div className="flex justify-between gap-2"><span className="truncate">{k}</span><span className="font-mono text-muted-foreground">{v}</span></div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2"><span className="truncate">{k}</span><span className="font-mono text-muted-foreground">{v}</span></div>
             <div className="mt-1 h-1.5 rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${(v / max) * 100}%` }} /></div>
           </li>
         ))}

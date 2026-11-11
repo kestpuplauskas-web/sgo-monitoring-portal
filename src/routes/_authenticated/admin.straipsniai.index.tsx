@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/admin/straipsniai/")({
+  head: () => ({ meta: [
+    { title: "Straipsniai | SGO administravimas" },
+    { name: "description", content: "Straipsniai SGO valdymo sistemoje." },
+    { property: "og:title", content: "Straipsniai | SGO" },
+    { property: "og:description", content: "Straipsniai SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: ArticlesList,
 });
 
@@ -46,12 +55,12 @@ function ArticlesList() {
             <ul>
               {list.data.map((a) => (
                 <li key={a.id} className="border-b border-border last:border-0">
-                  <Link to="/admin/straipsniai/$id" params={{ id: a.id }} className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/40">
+                  <Link to="/admin/straipsniai/$id" params={{ id: a.id }} className="grid min-w-0 gap-3 px-4 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:px-5 hover:bg-muted/40">
                     <div className="min-w-0">
-                      <p className="truncate font-semibold">{a.title}</p>
+                      <p className="line-clamp-2 break-words font-semibold">{a.title}</p>
                       <p className="truncate text-xs text-muted-foreground">sgo.lt/straipsniai/{a.slug}</p>
                     </div>
-                    <div className="shrink-0 text-right text-xs">
+                    <div className="flex items-center justify-between gap-3 text-xs sm:block sm:text-right">
                       {a.published ? (
                         <span className="rounded-full bg-primary/15 px-2.5 py-0.5 font-semibold text-primary">Publikuotas</span>
                       ) : (

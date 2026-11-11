@@ -15,6 +15,15 @@ import { formatEur } from "@/lib/plan-format";
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/_authenticated/admin/kainodara")({
+  head: () => ({ meta: [
+    { title: "Planų kainodara | SGO administravimas" },
+    { name: "description", content: "Planų kainodara SGO valdymo sistemoje." },
+    { property: "og:title", content: "Planų kainodara | SGO" },
+    { property: "og:description", content: "Planų kainodara SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: PricingPage,
 });
 
@@ -95,8 +104,8 @@ function PlanEditor({ plan }: { plan: Plan }) {
   const id = (k: string) => `${plan.slug}-${k}`;
 
   return (
-    <Panel className={f.recommended ? "border-primary p-6" : "p-6"}>
-      <div className="flex items-start justify-between gap-3">
+    <Panel className={f.recommended ? "border-primary p-4 sm:p-6" : "p-4 sm:p-6"}>
+      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
         <div>
           <p className="font-display text-xl font-extrabold">{f.name || "Be pavadinimo"}</p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -110,12 +119,12 @@ function PlanEditor({ plan }: { plan: Plan }) {
 
       <div className="mt-5 grid gap-4">
         <div className="grid gap-1.5"><Label htmlFor={id("name")}>Pavadinimas</Label><Input id={id("name")} value={f.name} onChange={set("name")} /></div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid gap-3">
           <div className="grid gap-1.5"><Label htmlFor={id("price")}>Kaina, €</Label><Input id={id("price")} inputMode="decimal" value={f.price} onChange={set("price")} aria-invalid={!priceOk(f.price)} /></div>
           <div className="grid gap-1.5"><Label htmlFor={id("old")}>Sena kaina, €</Label><Input id={id("old")} inputMode="decimal" placeholder="Nėra" value={f.old_price} onChange={set("old_price")} /></div>
           <div className="grid gap-1.5"><Label htmlFor={id("per")}>Laikotarpis</Label><Input id={id("per")} value={f.period_label} onChange={set("period_label")} /></div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3">
           <div className="grid gap-1.5"><Label htmlFor={id("act")}>Aktyvavimas, €</Label><Input id={id("act")} inputMode="decimal" value={f.activation_fee} onChange={set("activation_fee")} /></div>
           <div className="grid gap-1.5"><Label htmlFor={id("sort")}>Eilės nr. svetainėje</Label><Input id={id("sort")} inputMode="numeric" value={f.sort_order} onChange={set("sort_order")} /></div>
         </div>
@@ -131,7 +140,7 @@ function PlanEditor({ plan }: { plan: Plan }) {
           <label className="flex items-center gap-2 text-sm"><Switch checked={f.recommended} onCheckedChange={(v) => setF({ ...f, recommended: v })} /> Rekomenduojamas</label>
           <label className="flex items-center gap-2 text-sm"><Switch checked={f.active} onCheckedChange={(v) => setF({ ...f, active: v })} /> Rodomas svetainėje</label>
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="grid gap-2 sm:flex sm:justify-end">
           <Button variant="outline" disabled={!dirty} onClick={() => setF(init())}>Atšaukti pakeitimus</Button>
           <Button disabled={!dirty || !valid || save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Saugoma…" : "Išsaugoti"}</Button>
         </div>

@@ -19,6 +19,15 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/vartotojai")({
+  head: () => ({ meta: [
+    { title: "Vartotojai | SGO administravimas" },
+    { name: "description", content: "Vartotojai SGO valdymo sistemoje." },
+    { property: "og:title", content: "Vartotojai | SGO" },
+    { property: "og:description", content: "Vartotojai SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: UsersPage,
 });
 
@@ -73,16 +82,16 @@ function UsersPage() {
             <Panel>
               <ul>
                 {staff.data?.map((u) => (
-                  <li key={u.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 last:border-0">
-                    <div className="min-w-0">
+                  <li key={u.id} className="grid min-w-0 gap-3 sm:flex sm:items-center sm:justify-between border-b border-border px-5 py-4 last:border-0">
+                    <div className="min-w-0 sm:flex-1">
                       <p className="truncate font-semibold">{u.name || u.email}{u.isMe ? <span className="ml-2 text-xs text-muted-foreground">(jūs)</span> : null}</p>
                       <p className="truncate text-xs text-muted-foreground">
                         {u.name ? `${u.email} · ` : ""}{u.invited ? "Kvietimas dar nepriimtas" : `Paskutinį kartą prisijungė ${ltDate(u.lastSignIn)}`}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex">
                       <Select value={u.roles[0] ?? "editor"} onValueChange={(v) => chg.mutate({ userId: u.id, role: v as AppRole })} disabled={u.isMe}>
-                        <SelectTrigger className="h-9 w-44" aria-label="Rolė"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-11 w-full sm:w-44" aria-label="Rolė"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map((r) => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}</SelectContent>
                       </Select>
                       {!u.isMe ? (
@@ -107,7 +116,7 @@ function UsersPage() {
             </Panel>
           )}
         </div>
-        <Panel className="h-fit p-6">
+        <Panel className="h-fit p-4 sm:p-6">
           <p className="flex items-center gap-2 font-display text-lg font-bold"><UserPlus className="h-5 w-5 text-primary" /> Pakviesti vartotoją</p>
           <form onSubmit={submit} className="mt-4 grid gap-4">
             <div className="grid gap-1.5"><Label htmlFor="i-email">El. paštas</Label><Input id="i-email" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} /></div>

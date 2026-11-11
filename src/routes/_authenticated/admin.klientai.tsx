@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Download, Search } from "lucide-react";
+import { Download, Search, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Empty, PageBody, PageHeader, Panel, StatusPill, ltDate } from "@/components/admin/ui";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/klientai")({
+  head: () => ({ meta: [
+    { title: "Klientų registras | SGO administravimas" },
+    { name: "description", content: "Klientų registras SGO valdymo sistemoje." },
+    { property: "og:title", content: "Klientų registras | SGO" },
+    { property: "og:description", content: "Klientų registras SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: ClientsPage,
 });
 
@@ -82,7 +91,12 @@ function ClientsPage() {
             {clients.data?.length ? "Pabandykite kitą paiešką." : "Pirmasis klientas atsiras, kai kas nors užsakys planą svetainėje."}
           </Empty>
         ) : (
-          <Panel className="overflow-x-auto">
+          <>
+          <ul className="grid gap-3 md:hidden">{list.map((c) => {
+            const last = [...c.plan_orders].sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+            return <li key={c.id}><Button variant="outline" onClick={() => setOpen(c)} className="grid h-auto w-full grid-cols-[minmax(0,1fr)_auto] gap-3 whitespace-normal rounded-lg bg-card p-4 text-left"><div className="min-w-0"><p className="break-words text-base font-semibold">{c.name}</p><p className="mt-1 break-all text-xs text-muted-foreground">{c.email}</p><p className="mt-1 text-xs text-muted-foreground">{c.phone} · {c.city}</p>{last ? <div className="mt-3 flex flex-wrap items-center gap-2 text-sm"><span>{last.plan_name}</span><StatusPill status={last.status} /></div> : null}</div><ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" /></Button></li>;
+          })}</ul>
+          <Panel className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr className="border-b border-border">
@@ -109,6 +123,7 @@ function ClientsPage() {
               </tbody>
             </table>
           </Panel>
+          </>
         )}
       </PageBody>
       {open ? <ClientDialog client={open} onClose={() => setOpen(null)} onSave={(c) => save.mutate(c)} saving={save.isPending} /> : null}
@@ -121,7 +136,7 @@ function ClientDialog({ client, onClose, onSave, saving }: { client: ClientRow; 
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+      <DialogContent className="admin-dialog max-w-lg">
         <DialogHeader>
           <DialogTitle>{client.name}</DialogTitle>
           <DialogDescription>{client.email}</DialogDescription>
@@ -138,14 +153,14 @@ function ClientDialog({ client, onClose, onSave, saving }: { client: ClientRow; 
           <ul className="grid gap-2 text-sm">
             {client.plan_orders.length === 0 ? <li className="text-muted-foreground">Užsakymų nėra</li> : null}
             {client.plan_orders.map((o) => (
-              <li key={o.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
+              <li key={o.id} className="grid gap-2 sm:flex sm:items-center sm:justify-between rounded-lg border border-border px-3 py-2">
                 <span><span className="font-mono text-xs">{o.order_no}</span> · {o.plan_name}</span>
                 <span className="flex items-center gap-2 text-xs text-muted-foreground">{ltDate(o.created_at, false)} <StatusPill status={o.status} /></span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
           <Button variant="outline" onClick={onClose}>Atšaukti</Button>
           <Button disabled={saving || f.name.trim().length < 2} onClick={() => onSave({ id: client.id, ...f })}>{saving ? "Saugoma…" : "Išsaugoti"}</Button>
         </div>

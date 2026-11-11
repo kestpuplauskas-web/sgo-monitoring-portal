@@ -12,6 +12,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/uzklausos")({
+  head: () => ({ meta: [
+    { title: "Klientų užklausos | SGO administravimas" },
+    { name: "description", content: "Klientų užklausos SGO valdymo sistemoje." },
+    { property: "og:title", content: "Klientų užklausos | SGO" },
+    { property: "og:description", content: "Klientų užklausos SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: InquiriesPage,
 });
 
@@ -89,14 +98,14 @@ function InquiriesPage() {
                 const seen = r.status === "nauja" ? { ...r, status: "perziureta" } : r;
                 setOpen(seen); setNotes(r.notes);
                 if (r.status === "nauja") markSeen.mutate(r.id);
-              }} className="flex w-full items-start justify-between gap-4 p-4 text-left hover:bg-muted/40">
+              }} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-3 p-4 text-left hover:bg-muted/40">
                 <div className="min-w-0">
                   <p className="font-semibold">{r.name} {r.service ? <span className="font-normal text-muted-foreground">· {r.service}</span> : null}</p>
                   <p className="truncate text-sm text-muted-foreground">{r.message}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <StatusPill status={r.status} />
-                  <span className="text-xs text-muted-foreground">{ltDate(r.created_at)}</span>
+                  <span className="text-xs text-muted-foreground">{ltDate(r.created_at, false)}</span>
                 </div>
               </button>
             ))}
@@ -105,7 +114,7 @@ function InquiriesPage() {
       </PageBody>
 
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="admin-dialog max-w-lg">
           {open ? (
             <>
               <DialogHeader>
@@ -113,9 +122,9 @@ function InquiriesPage() {
                 <DialogDescription>{ltDate(open.created_at)}{open.page ? ` · ${open.page}` : ""}</DialogDescription>
               </DialogHeader>
               <div className="grid gap-3 text-sm">
-                <div className="flex flex-wrap gap-3">
-                  <a className="inline-flex items-center gap-1 text-primary underline" href={`mailto:${open.email}`}><Mail className="h-4 w-4" />{open.email}</a>
-                  {open.phone ? <a className="inline-flex items-center gap-1 text-primary underline" href={`tel:${open.phone}`}><Phone className="h-4 w-4" />{open.phone}</a> : null}
+                <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap">
+                  <a className="inline-flex min-h-11 min-w-0 items-center gap-2 break-all text-primary underline" href={`mailto:${open.email}`}><Mail className="h-4 w-4" />{open.email}</a>
+                  {open.phone ? <a className="inline-flex min-h-11 min-w-0 items-center gap-2 break-all text-primary underline" href={`tel:${open.phone}`}><Phone className="h-4 w-4" />{open.phone}</a> : null}
                 </div>
                 {[["Vieta", open.city], ["Paslauga", open.service], ["Galia", open.power]].filter(([, v]) => v).map(([k, v]) => (
                   <p key={k}><span className="text-muted-foreground">{k}: </span>{v}</p>
@@ -134,7 +143,7 @@ function InquiriesPage() {
                   <Label htmlFor="inq-notes">Pastabos</Label>
                   <Textarea id="inq-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
                 </div>
-                <div className="flex justify-end gap-2">
+                <div className="grid gap-2 sm:flex sm:justify-end">
                   <Button variant="outline" onClick={() => setOpen(null)}>Uždaryti</Button>
                   <Button disabled={save.isPending} onClick={() => save.mutate({ id: open.id, notes })}>Išsaugoti pastabas</Button>
                 </div>

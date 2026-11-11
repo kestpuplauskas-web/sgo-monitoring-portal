@@ -1,10 +1,12 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { ReactNode } from "react";
-import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog, Menu } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canAccess, ROLE_LABELS, type Section } from "@/lib/admin-roles";
 import { useMyRoles } from "@/lib/use-my-roles";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function AdminLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const me = useMyRoles();
@@ -75,16 +78,8 @@ function AdminLayout() {
 
   const show = (s: Section) => canAccess(roles, s);
 
-  return (
-    <div className="min-h-screen bg-background lg:flex">
-      <aside className="border-b border-sidebar-border bg-sidebar px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-r lg:px-4 lg:py-6">
-        <Link to="/admin" className="flex items-center gap-2 px-2">
-          <img src="/assets/sgo-logo-mark.webp" alt="" className="h-8 w-8" />
-          <img src="/assets/sgo-logo-sgo.webp" alt="SGO" className="h-6 w-auto" />
-        </Link>
-        <p className="mt-2 px-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Valdymo sistema</p>
-
-        <nav aria-label="Administravimo meniu" className="mt-7 grid gap-6 sm:grid-cols-3 lg:flex-1 lg:grid-cols-1 lg:content-start">
+  const navigation = <>
+        <nav aria-label="Administravimo meniu" onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMenuOpen(false); }} className="mt-7 grid gap-6 lg:flex-1 lg:content-start">
           {show("orders") || show("clients") || show("analytics") ? (
             <NavGroup label="Darbo sritis">
               {show("orders") ? (
@@ -107,7 +102,7 @@ function AdminLayout() {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               Svetainė
@@ -118,13 +113,36 @@ function AdminLayout() {
         <div className="mt-8 border-t border-sidebar-border px-2 pt-4">
           <p className="truncate text-sm">{me.data?.email}</p>
           <p className="text-xs text-muted-foreground">{roles.map((r) => ROLE_LABELS[r]).join(", ")}</p>
-          <button
+          <Button variant="outline"
             onClick={signOut}
-            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full border border-border px-4 text-sm hover:border-primary"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-4 text-sm hover:border-primary"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" /> Atsijungti
-          </button>
+          </Button>
         </div>
+  </>;
+
+  return (
+    <div className="admin-panel min-h-dvh bg-background lg:flex">
+      <header className="sticky top-0 z-30 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-sidebar-border bg-sidebar px-4 py-3 lg:hidden">
+        <Link to="/admin" className="flex min-w-0 items-center gap-2" aria-label="SGO administravimas"><img src="/assets/sgo-logo-mark.webp" alt="" className="h-7 w-7 shrink-0" /><img src="/assets/sgo-logo-sgo.webp" alt="SGO" className="h-5 w-auto" /><span className="ml-2 border-l border-border pl-3 text-xs text-muted-foreground">Administravimas</span></Link>
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <SheetTrigger asChild><Button variant="outline" size="icon" className="h-11 w-11" aria-label="Atidaryti meniu"><Menu className="h-5 w-5" /></Button></SheetTrigger>
+          <SheetContent side="left" className="admin-panel flex w-[min(88vw,360px)] flex-col overflow-y-auto bg-sidebar p-5">
+            <SheetTitle className="pr-12 text-left">SGO administravimas</SheetTitle>
+            <SheetDescription className="sr-only">Administravimo skyriai ir paskyra</SheetDescription>
+            {navigation}
+          </SheetContent>
+        </Sheet>
+      </header>
+      <aside className="hidden border-b border-sidebar-border bg-sidebar px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-r lg:px-4 lg:py-6">
+        <Link to="/admin" className="flex items-center gap-2 px-2">
+          <img src="/assets/sgo-logo-mark.webp" alt="" className="h-8 w-8" />
+          <img src="/assets/sgo-logo-sgo.webp" alt="SGO" className="h-6 w-auto" />
+        </Link>
+        <p className="mt-2 px-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Valdymo sistema</p>
+
+        {navigation}
       </aside>
       <div className="min-w-0 flex-1">
         <Outlet />
@@ -146,7 +164,7 @@ function NavItem({ to, icon, badge, children }: { to: string; icon: ReactNode; b
   return (
     <Link
       to={to}
-      className="flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+      className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
       activeProps={{ className: "bg-sidebar-accent font-semibold !text-sidebar-accent-foreground" }}
     >
       <span aria-hidden="true" className="text-primary">{icon}</span>
