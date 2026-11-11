@@ -318,7 +318,8 @@
     };
     var serverError = '';
 
-    fetch('/send-mail.php', request)
+    if (!hasFiles) { var _b = JSON.parse(request.body); _b.page = location.pathname; request.body = JSON.stringify(_b); }
+    fetch('/api/public/inquiries', request)
       .then(function(res){
         return res.json().catch(function(){ return {}; }).then(function(data){
           if (!res.ok || !data || !data.success) {
