@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- The sgo.lt public website is the original static HTML/CSS/JS kept in public/; routes /, /monitoringas, /diagnostika, /servisas only serve those files, so edit the HTML in public/ to change the site.
