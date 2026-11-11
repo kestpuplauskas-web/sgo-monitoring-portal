@@ -18,6 +18,8 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AdminPrisijungimasRouteImport } from './routes/admin.prisijungimas'
 import { Route as AdminSlaptazodisRouteImport } from './routes/admin.slaptazodis'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminAnalitikaRouteImport } from './routes/_authenticated/admin.analitika'
+import { Route as AuthenticatedAdminKainodaraRouteImport } from './routes/_authenticated/admin.kainodara'
 import { Route as AuthenticatedAdminKlientaiRouteImport } from './routes/_authenticated/admin.klientai'
 import { Route as AuthenticatedAdminUzsakymaiRouteImport } from './routes/_authenticated/admin.uzsakymai'
 import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
@@ -68,6 +70,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAnalitikaRoute =
+  AuthenticatedAdminAnalitikaRouteImport.update({
+    id: '/analitika',
+    path: '/analitika',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminKainodaraRoute =
+  AuthenticatedAdminKainodaraRouteImport.update({
+    id: '/kainodara',
+    path: '/kainodara',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminKlientaiRoute =
   AuthenticatedAdminKlientaiRouteImport.update({
     id: '/klientai',
@@ -104,6 +118,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
@@ -118,6 +134,8 @@ export interface FileRoutesByTo {
   '/servisas': typeof ServisasRoute
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
@@ -135,6 +153,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/_authenticated/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/_authenticated/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/_authenticated/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/_authenticated/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
@@ -152,6 +172,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/admin/analitika'
+    | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzsakymai'
     | '/api/public/orders'
@@ -166,6 +188,8 @@ export interface FileRouteTypes {
     | '/servisas'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/admin/analitika'
+    | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzsakymai'
     | '/api/public/orders'
@@ -182,6 +206,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/_authenticated/admin/analitika'
+    | '/_authenticated/admin/kainodara'
     | '/_authenticated/admin/klientai'
     | '/_authenticated/admin/uzsakymai'
     | '/api/public/orders'
@@ -268,6 +294,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/analitika': {
+      id: '/_authenticated/admin/analitika'
+      path: '/analitika'
+      fullPath: '/admin/analitika'
+      preLoaderRoute: typeof AuthenticatedAdminAnalitikaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/kainodara': {
+      id: '/_authenticated/admin/kainodara'
+      path: '/kainodara'
+      fullPath: '/admin/kainodara'
+      preLoaderRoute: typeof AuthenticatedAdminKainodaraRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/klientai': {
       id: '/_authenticated/admin/klientai'
       path: '/klientai'
@@ -307,12 +347,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalitikaRoute: typeof AuthenticatedAdminAnalitikaRoute
+  AuthenticatedAdminKainodaraRoute: typeof AuthenticatedAdminKainodaraRoute
   AuthenticatedAdminKlientaiRoute: typeof AuthenticatedAdminKlientaiRoute
   AuthenticatedAdminUzsakymaiRoute: typeof AuthenticatedAdminUzsakymaiRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalitikaRoute: AuthenticatedAdminAnalitikaRoute,
+  AuthenticatedAdminKainodaraRoute: AuthenticatedAdminKainodaraRoute,
   AuthenticatedAdminKlientaiRoute: AuthenticatedAdminKlientaiRoute,
   AuthenticatedAdminUzsakymaiRoute: AuthenticatedAdminUzsakymaiRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
