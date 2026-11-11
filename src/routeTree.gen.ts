@@ -17,14 +17,19 @@ import { Route as ServisasRouteImport } from './routes/servisas'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AdminPrisijungimasRouteImport } from './routes/admin.prisijungimas'
 import { Route as AdminSlaptazodisRouteImport } from './routes/admin.slaptazodis'
+import { Route as StraipsniaiIndexRouteImport } from './routes/straipsniai.index'
+import { Route as StraipsniaiSlugRouteImport } from './routes/straipsniai.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminAnalitikaRouteImport } from './routes/_authenticated/admin.analitika'
 import { Route as AuthenticatedAdminKainodaraRouteImport } from './routes/_authenticated/admin.kainodara'
 import { Route as AuthenticatedAdminKlientaiRouteImport } from './routes/_authenticated/admin.klientai'
 import { Route as AuthenticatedAdminUzsakymaiRouteImport } from './routes/_authenticated/admin.uzsakymai'
+import { Route as AuthenticatedAdminVartotojaiRouteImport } from './routes/_authenticated/admin.vartotojai'
 import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
 import { Route as ApiPublicPlansRouteImport } from './routes/api/public/plans'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as AuthenticatedAdminStraipsniaiIndexRouteImport } from './routes/_authenticated/admin.straipsniai.index'
+import { Route as AuthenticatedAdminStraipsniaiIdRouteImport } from './routes/_authenticated/admin.straipsniai.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,6 +70,16 @@ const AdminSlaptazodisRoute = AdminSlaptazodisRouteImport.update({
   path: '/admin/slaptazodis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StraipsniaiIndexRoute = StraipsniaiIndexRouteImport.update({
+  id: '/straipsniai/',
+  path: '/straipsniai/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StraipsniaiSlugRoute = StraipsniaiSlugRouteImport.update({
+  id: '/straipsniai/$slug',
+  path: '/straipsniai/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -94,6 +109,12 @@ const AuthenticatedAdminUzsakymaiRoute =
     path: '/uzsakymai',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminVartotojaiRoute =
+  AuthenticatedAdminVartotojaiRouteImport.update({
+    id: '/vartotojai',
+    path: '/vartotojai',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicOrdersRoute = ApiPublicOrdersRouteImport.update({
   id: '/api/public/orders',
   path: '/api/public/orders',
@@ -109,6 +130,18 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   path: '/api/public/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminStraipsniaiIndexRoute =
+  AuthenticatedAdminStraipsniaiIndexRouteImport.update({
+    id: '/straipsniai/',
+    path: '/straipsniai/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminStraipsniaiIdRoute =
+  AuthenticatedAdminStraipsniaiIdRouteImport.update({
+    id: '/straipsniai/$id',
+    path: '/straipsniai/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -118,14 +151,19 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/straipsniai/$slug': typeof StraipsniaiSlugRoute
+  '/straipsniai/': typeof StraipsniaiIndexRoute
   '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
   '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
+  '/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/straipsniai/$id': typeof AuthenticatedAdminStraipsniaiIdRoute
+  '/admin/straipsniai/': typeof AuthenticatedAdminStraipsniaiIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,14 +172,19 @@ export interface FileRoutesByTo {
   '/servisas': typeof ServisasRoute
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/straipsniai/$slug': typeof StraipsniaiSlugRoute
+  '/straipsniai': typeof StraipsniaiIndexRoute
   '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
   '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
+  '/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/straipsniai/$id': typeof AuthenticatedAdminStraipsniaiIdRoute
+  '/admin/straipsniai': typeof AuthenticatedAdminStraipsniaiIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,14 +196,19 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/straipsniai/$slug': typeof StraipsniaiSlugRoute
+  '/straipsniai/': typeof StraipsniaiIndexRoute
   '/_authenticated/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
   '/_authenticated/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/_authenticated/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/_authenticated/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
+  '/_authenticated/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/straipsniai/$id': typeof AuthenticatedAdminStraipsniaiIdRoute
+  '/_authenticated/admin/straipsniai/': typeof AuthenticatedAdminStraipsniaiIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -172,14 +220,19 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/straipsniai/$slug'
+    | '/straipsniai/'
     | '/admin/analitika'
     | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzsakymai'
+    | '/admin/vartotojai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
     | '/admin/'
+    | '/admin/straipsniai/$id'
+    | '/admin/straipsniai/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,14 +241,19 @@ export interface FileRouteTypes {
     | '/servisas'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/straipsniai/$slug'
+    | '/straipsniai'
     | '/admin/analitika'
     | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzsakymai'
+    | '/admin/vartotojai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
     | '/admin'
+    | '/admin/straipsniai/$id'
+    | '/admin/straipsniai'
   id:
     | '__root__'
     | '/'
@@ -206,14 +264,19 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/straipsniai/$slug'
+    | '/straipsniai/'
     | '/_authenticated/admin/analitika'
     | '/_authenticated/admin/kainodara'
     | '/_authenticated/admin/klientai'
     | '/_authenticated/admin/uzsakymai'
+    | '/_authenticated/admin/vartotojai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/straipsniai/$id'
+    | '/_authenticated/admin/straipsniai/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -224,6 +287,8 @@ export interface RootRouteChildren {
   ServisasRoute: typeof ServisasRoute
   AdminPrisijungimasRoute: typeof AdminPrisijungimasRoute
   AdminSlaptazodisRoute: typeof AdminSlaptazodisRoute
+  StraipsniaiSlugRoute: typeof StraipsniaiSlugRoute
+  StraipsniaiIndexRoute: typeof StraipsniaiIndexRoute
   ApiPublicOrdersRoute: typeof ApiPublicOrdersRoute
   ApiPublicPlansRoute: typeof ApiPublicPlansRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -287,6 +352,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSlaptazodisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/straipsniai/': {
+      id: '/straipsniai/'
+      path: '/straipsniai'
+      fullPath: '/straipsniai/'
+      preLoaderRoute: typeof StraipsniaiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/straipsniai/$slug': {
+      id: '/straipsniai/$slug'
+      path: '/straipsniai/$slug'
+      fullPath: '/straipsniai/$slug'
+      preLoaderRoute: typeof StraipsniaiSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -322,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUzsakymaiRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/vartotojai': {
+      id: '/_authenticated/admin/vartotojai'
+      path: '/vartotojai'
+      fullPath: '/admin/vartotojai'
+      preLoaderRoute: typeof AuthenticatedAdminVartotojaiRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/orders': {
       id: '/api/public/orders'
       path: '/api/public/orders'
@@ -343,6 +429,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/straipsniai/': {
+      id: '/_authenticated/admin/straipsniai/'
+      path: '/straipsniai'
+      fullPath: '/admin/straipsniai/'
+      preLoaderRoute: typeof AuthenticatedAdminStraipsniaiIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/straipsniai/$id': {
+      id: '/_authenticated/admin/straipsniai/$id'
+      path: '/straipsniai/$id'
+      fullPath: '/admin/straipsniai/$id'
+      preLoaderRoute: typeof AuthenticatedAdminStraipsniaiIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -351,7 +451,10 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminKainodaraRoute: typeof AuthenticatedAdminKainodaraRoute
   AuthenticatedAdminKlientaiRoute: typeof AuthenticatedAdminKlientaiRoute
   AuthenticatedAdminUzsakymaiRoute: typeof AuthenticatedAdminUzsakymaiRoute
+  AuthenticatedAdminVartotojaiRoute: typeof AuthenticatedAdminVartotojaiRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminStraipsniaiIdRoute: typeof AuthenticatedAdminStraipsniaiIdRoute
+  AuthenticatedAdminStraipsniaiIndexRoute: typeof AuthenticatedAdminStraipsniaiIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -359,7 +462,11 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminKainodaraRoute: AuthenticatedAdminKainodaraRoute,
   AuthenticatedAdminKlientaiRoute: AuthenticatedAdminKlientaiRoute,
   AuthenticatedAdminUzsakymaiRoute: AuthenticatedAdminUzsakymaiRoute,
+  AuthenticatedAdminVartotojaiRoute: AuthenticatedAdminVartotojaiRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminStraipsniaiIdRoute: AuthenticatedAdminStraipsniaiIdRoute,
+  AuthenticatedAdminStraipsniaiIndexRoute:
+    AuthenticatedAdminStraipsniaiIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -384,6 +491,8 @@ const rootRouteChildren: RootRouteChildren = {
   ServisasRoute: ServisasRoute,
   AdminPrisijungimasRoute: AdminPrisijungimasRoute,
   AdminSlaptazodisRoute: AdminSlaptazodisRoute,
+  StraipsniaiSlugRoute: StraipsniaiSlugRoute,
+  StraipsniaiIndexRoute: StraipsniaiIndexRoute,
   ApiPublicOrdersRoute: ApiPublicOrdersRoute,
   ApiPublicPlansRoute: ApiPublicPlansRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,

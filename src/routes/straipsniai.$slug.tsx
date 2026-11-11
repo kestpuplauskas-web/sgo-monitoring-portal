@@ -3,7 +3,7 @@ import { getPublishedArticle } from "@/lib/articles.functions";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { ArticleBody } from "@/lib/article-body";
 
-export const Route = createFileRoute("/straipsniai/")({
+export const Route = createFileRoute("/straipsniai/$slug")({
   loader: async ({ params }) => {
     const a = await getPublishedArticle({ data: { slug: params.slug } });
     if (!a) throw notFound();
