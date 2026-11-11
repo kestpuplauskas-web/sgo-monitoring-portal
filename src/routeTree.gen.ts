@@ -9,27 +9,105 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DiagnostikaRouteImport } from './routes/diagnostika'
+import { Route as MonitoringasRouteImport } from './routes/monitoringas'
+import { Route as ServisasRouteImport } from './routes/servisas'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnostikaRoute = DiagnostikaRouteImport.update({
+  id: '/diagnostika',
+  path: '/diagnostika',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringasRoute = MonitoringasRouteImport.update({
+  id: '/monitoringas',
+  path: '/monitoringas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServisasRoute = ServisasRouteImport.update({
+  id: '/servisas',
+  path: '/servisas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/diagnostika': typeof DiagnostikaRoute
+  '/monitoringas': typeof MonitoringasRoute
+  '/servisas': typeof ServisasRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/diagnostika': typeof DiagnostikaRoute
+  '/monitoringas': typeof MonitoringasRoute
+  '/servisas': typeof ServisasRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/diagnostika': typeof DiagnostikaRoute
+  '/monitoringas': typeof MonitoringasRoute
+  '/servisas': typeof ServisasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/' | '/diagnostika' | '/monitoringas' | '/servisas'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/' | '/diagnostika' | '/monitoringas' | '/servisas'
+  id: '__root__' | '/' | '/diagnostika' | '/monitoringas' | '/servisas'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  DiagnostikaRoute: typeof DiagnostikaRoute
+  MonitoringasRoute: typeof MonitoringasRoute
+  ServisasRoute: typeof ServisasRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostika': {
+      id: '/diagnostika'
+      path: '/diagnostika'
+      fullPath: '/diagnostika'
+      preLoaderRoute: typeof DiagnostikaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monitoringas': {
+      id: '/monitoringas'
+      path: '/monitoringas'
+      fullPath: '/monitoringas'
+      preLoaderRoute: typeof MonitoringasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servisas': {
+      id: '/servisas'
+      path: '/servisas'
+      fullPath: '/servisas'
+      preLoaderRoute: typeof ServisasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  DiagnostikaRoute: DiagnostikaRoute,
+  MonitoringasRoute: MonitoringasRoute,
+  ServisasRoute: ServisasRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
