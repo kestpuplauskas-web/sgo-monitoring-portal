@@ -19,6 +19,15 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/_authenticated/admin/straipsniai/$id")({
+  head: () => ({ meta: [
+    { title: "Straipsnio redagavimas | SGO administravimas" },
+    { name: "description", content: "Straipsnio redagavimas SGO valdymo sistemoje." },
+    { property: "og:title", content: "Straipsnio redagavimas | SGO" },
+    { property: "og:description", content: "Straipsnio redagavimas SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: ArticleEditorPage,
 });
 
@@ -108,13 +117,13 @@ function Editor({ article }: { article: Tables<"articles"> }) {
       />
       <PageBody className="grid gap-6 xl:grid-cols-[1fr_340px]">
         <div className="grid content-start gap-5">
-          <Panel className="grid gap-4 p-6">
+          <Panel className="grid gap-4 p-4 sm:p-6">
             <div className="grid gap-1.5"><Label htmlFor="a-title">Antraštė</Label><Input id="a-title" value={f.title} onChange={set("title")} className="h-11 text-base" /></div>
             <div className="grid gap-1.5"><Label htmlFor="a-ex">Įžanga (rodoma sąraše)</Label><Textarea id="a-ex" rows={2} value={f.excerpt} onChange={set("excerpt")} /></div>
             <div className="grid gap-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="a-body">Tekstas</Label>
-                <button type="button" className="text-xs text-primary" onClick={() => setPreview(!preview)}>{preview ? "Redaguoti" : "Peržiūra"}</button>
+                <Button variant="ghost" size="sm" type="button" className="text-xs text-primary" onClick={() => setPreview(!preview)}>{preview ? "Redaguoti" : "Peržiūra"}</Button>
               </div>
               {preview ? (
                 <div className="rounded-lg border border-border p-5"><ArticleBody body={f.body || "_Tuščia_"} /></div>
@@ -137,7 +146,7 @@ function Editor({ article }: { article: Tables<"articles"> }) {
             <div className="grid gap-1.5">
               <Label htmlFor="a-slug">Nuorodos adresas</Label>
               <Input id="a-slug" value={f.slug} onChange={(e) => { setSlugTouched(true); setF({ ...f, slug: e.target.value }); }} aria-invalid={!slugOk} />
-              <p className={slugOk ? "text-xs text-muted-foreground" : "text-xs text-destructive"}>
+              <p className={slugOk ? "break-all text-xs text-muted-foreground" : "text-xs text-destructive"}>
                 {slugOk ? `sgo.lt/straipsniai/${f.slug}` : "Tik mažosios raidės be lietuviškų ženklų, skaičiai ir brūkšneliai."}
               </p>
             </div>

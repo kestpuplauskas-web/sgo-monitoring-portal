@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Search } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Empty, PageBody, PageHeader, Panel, Stat, StatusPill, ltDate } from "@/components/admin/ui";
 import { ORDER_STATUSES } from "@/lib/admin-roles";
@@ -16,6 +16,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/_authenticated/admin/uzsakymai")({
+  head: () => ({ meta: [
+    { title: "Planų užsakymai | SGO administravimas" },
+    { name: "description", content: "Planų užsakymai SGO valdymo sistemoje." },
+    { property: "og:title", content: "Planų užsakymai | SGO" },
+    { property: "og:description", content: "Planų užsakymai SGO valdymo sistemoje." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: OrdersPage,
 });
 
@@ -69,19 +78,19 @@ function OrdersPage() {
     <>
       <PageHeader title="Planų užsakymai" description="Čia patenka planai, kuriuos klientai pasirinko ir užsakė svetainėje." />
       <PageBody className="grid gap-6">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 [&>*:first-child]:col-span-2 sm:[&>*:first-child]:col-span-1">
           <Stat label="Nauji, laukia veiksmo" value={orders.isLoading ? "…" : fresh} />
           <Stat label="Šį mėnesį" value={orders.isLoading ? "…" : month} />
           <Stat label="Aktyvuoti planai" value={orders.isLoading ? "…" : active} />
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <div className="relative min-w-60 flex-1">
+        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="relative min-w-0">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <Input aria-label="Paieška" placeholder="Ieškoti pagal vardą, el. paštą, numerį…" value={q} onChange={(e) => setQ(e.target.value)} className="h-10 pl-9" />
           </div>
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-10 w-48" aria-label="Būsena"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-11 w-full sm:w-48" aria-label="Būsena"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="visi">Visos būsenos</SelectItem>
               {ORDER_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
@@ -96,7 +105,14 @@ function OrdersPage() {
             {all.length ? "Pakeiskite paiešką arba būsenos filtrą." : "Kai klientas svetainėje pasirinks planą, užsakymas atsiras čia."}
           </Empty>
         ) : (
-          <Panel className="overflow-x-auto">
+          <>
+          <ul className="grid gap-3 md:hidden">
+            {list.map((o) => <li key={o.id}><Button variant="outline" onClick={() => setOpen(o)} className="grid h-auto w-full grid-cols-[minmax(0,1fr)_auto] gap-3 whitespace-normal rounded-lg bg-card p-4 text-left">
+              <div className="min-w-0"><p className="font-mono text-xs text-muted-foreground">{o.order_no}</p><p className="mt-1 break-words text-base font-semibold">{o.name}</p><p className="mt-2 text-sm text-primary">{o.plan_name} · {o.price_label}</p><p className="mt-1 break-words text-xs text-muted-foreground">{o.city} · {ltDate(o.created_at, false)}</p></div>
+              <div className="flex shrink-0 flex-col items-end justify-between gap-4"><StatusPill status={o.status} /><ChevronRight className="h-5 w-5 text-muted-foreground" /></div>
+            </Button></li>)}
+          </ul>
+          <Panel className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr className="border-b border-border">
@@ -130,6 +146,7 @@ function OrdersPage() {
               </tbody>
             </table>
           </Panel>
+          </>
         )}
       </PageBody>
       {open ? <OrderDialog order={open} onClose={() => setOpen(null)} onSave={(o) => save.mutate(o)} saving={save.isPending} /> : null}
@@ -142,12 +159,12 @@ function OrderDialog({ order, onClose, onSave, saving }: { order: Order; onClose
   const [notes, setNotes] = useState(order.admin_notes);
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="admin-dialog max-w-lg">
         <DialogHeader>
           <DialogTitle>Užsakymas {order.order_no}</DialogTitle>
           <DialogDescription>Gautas {ltDate(order.created_at)}</DialogDescription>
         </DialogHeader>
-        <dl className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-2 text-sm">
+        <dl className="grid grid-cols-[80px_minmax(0,1fr)] gap-x-3 gap-y-3 break-words sm:grid-cols-[120px_minmax(0,1fr)] [&_dd]:min-w-0 [&_a]:break-all text-sm">
           <dt className="text-muted-foreground">Planas</dt><dd className="font-semibold">{order.plan_name} · {order.price_label}</dd>
           <dt className="text-muted-foreground">Vardas</dt><dd>{order.name}</dd>
           <dt className="text-muted-foreground">El. paštas</dt><dd><a className="text-primary hover:underline" href={`mailto:${order.email}`}>{order.email}</a></dd>
@@ -166,7 +183,7 @@ function OrderDialog({ order, onClose, onSave, saving }: { order: Order; onClose
           <Label htmlFor="notes">Vidinės pastabos</Label>
           <Textarea id="notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Pvz. paskambinta, prijungimas suderintas 11-15" />
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
           <Button variant="outline" onClick={onClose}>Atšaukti</Button>
           <Button onClick={() => onSave({ id: order.id, status, admin_notes: notes })} disabled={saving}>{saving ? "Saugoma…" : "Išsaugoti"}</Button>
         </div>
