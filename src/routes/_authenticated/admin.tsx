@@ -131,7 +131,7 @@ function NavGroup({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function NavItem({ to, icon, badge, children }: { to: string; icon: ReactNode; badge?: number; children: ReactNode }) {
+function NavItem({ to, icon, badge, children }: { to: string; icon: ReactNode; badge?: number | undefined; children: ReactNode }) {
   return (
     <Link
       to={to}
