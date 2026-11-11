@@ -34,3 +34,4 @@ use the editor.
 - The static site talks to the backend only through /api/public/plans, /api/public/orders and /api/public/track, so plan prices, orders and analytics stay in the database while the HTML stays static.
 - Roles live in public.user_roles (admin/manager/editor) enforced by RLS via has_any_role; the first account ever created becomes admin automatically.
 - Classify password-update errors in a browser-safe helper so weak-password rejections never masquerade as expired invitations; preserve hosted password security checks.
+- Admin navigation uses the same role-filtered links in the desktop sidebar and mobile drawer; mobile order/client cards share the existing queries and dialogs to avoid behavioral divergence.

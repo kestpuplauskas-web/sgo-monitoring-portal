@@ -113,6 +113,7 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.7 0.14 170);
+  --overlay: oklch(0 0 0 / 75%);
 }
 
 @font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:400 600;font-display:swap;src:url(/assets/fonts/ibm-plex-sans-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F}
@@ -131,4 +132,15 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+}
+
+/* Phone ergonomics are scoped to admin; public website styling stays unchanged. */
+@media (max-width: 767px) {
+  .admin-panel button, .admin-panel [role="combobox"], .admin-dialog button, .admin-dialog [role="combobox"] { min-height: 44px; }
+  .admin-panel input, .admin-panel textarea, .admin-dialog input, .admin-dialog textarea { font-size: 16px; }
+  .admin-panel input, .admin-panel [role="combobox"], .admin-dialog input, .admin-dialog [role="combobox"] { min-height: 44px; }
+  .admin-panel [role="switch"] { min-height: 24px; }
+  .admin-panel [role="switch"]::before { content: ""; position: absolute; inset: -10px 0; }
+  .admin-dialog { width: calc(100% - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; border-radius: 8px; padding: 20px; overflow-wrap: anywhere; }
+  .admin-dialog [data-slot="dialog-header"] { text-align: left; }
 }
