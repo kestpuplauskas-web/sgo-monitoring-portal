@@ -1,3 +1,4 @@
+import { PlanOrderButton } from "@/components/site/PlanOrderDialog";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getPublishedArticle } from "@/lib/articles.functions";
 import { SiteChrome } from "@/components/site/SiteChrome";
@@ -67,7 +68,7 @@ function ArticlePage() {
           <aside className="mt-14 rounded-2xl border border-primary/40 bg-card p-7">
             <p className="font-display text-2xl font-extrabold">Norite, kad elektrinė veiktų be rūpesčių?</p>
             <p className="mt-2 text-muted-foreground">Stebime jūsų elektrinę 24/7 ir pranešame apie sutrikimus laiku. Planai nuo 0 € / mėn.</p>
-            <a href="/#planai" className="mt-5 inline-flex min-h-11 items-center rounded-full bg-primary px-6 font-mono text-sm font-bold text-primary-foreground">Pasirinkti planą</a>
+            <PlanOrderButton className="mt-5 inline-flex min-h-11 items-center rounded-full bg-primary px-6 font-mono text-sm font-bold text-primary-foreground">Pasirinkti planą</PlanOrderButton>
           </aside>
         </article>
       </main>
