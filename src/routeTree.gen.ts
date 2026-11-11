@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiagnostikaRouteImport } from './routes/diagnostika'
 import { Route as MonitoringasRouteImport } from './routes/monitoringas'
 import { Route as ServisasRouteImport } from './routes/servisas'
+import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
+import { Route as ApiPublicPlansRouteImport } from './routes/api/public/plans'
+import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +37,39 @@ const ServisasRoute = ServisasRouteImport.update({
   path: '/servisas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicOrdersRoute = ApiPublicOrdersRouteImport.update({
+  id: '/api/public/orders',
+  path: '/api/public/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPlansRoute = ApiPublicPlansRouteImport.update({
+  id: '/api/public/plans',
+  path: '/api/public/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
+  id: '/api/public/track',
+  path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/api/public/orders': typeof ApiPublicOrdersRoute
+  '/api/public/plans': typeof ApiPublicPlansRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/api/public/orders': typeof ApiPublicOrdersRoute
+  '/api/public/plans': typeof ApiPublicPlansRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +77,38 @@ export interface FileRoutesById {
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/api/public/orders': typeof ApiPublicOrdersRoute
+  '/api/public/plans': typeof ApiPublicPlansRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/diagnostika' | '/monitoringas' | '/servisas'
+  fullPaths:
+    | '/'
+    | '/diagnostika'
+    | '/monitoringas'
+    | '/servisas'
+    | '/api/public/orders'
+    | '/api/public/plans'
+    | '/api/public/track'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/diagnostika' | '/monitoringas' | '/servisas'
-  id: '__root__' | '/' | '/diagnostika' | '/monitoringas' | '/servisas'
+  to:
+    | '/'
+    | '/diagnostika'
+    | '/monitoringas'
+    | '/servisas'
+    | '/api/public/orders'
+    | '/api/public/plans'
+    | '/api/public/track'
+  id:
+    | '__root__'
+    | '/'
+    | '/diagnostika'
+    | '/monitoringas'
+    | '/servisas'
+    | '/api/public/orders'
+    | '/api/public/plans'
+    | '/api/public/track'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +116,9 @@ export interface RootRouteChildren {
   DiagnostikaRoute: typeof DiagnostikaRoute
   MonitoringasRoute: typeof MonitoringasRoute
   ServisasRoute: typeof ServisasRoute
+  ApiPublicOrdersRoute: typeof ApiPublicOrdersRoute
+  ApiPublicPlansRoute: typeof ApiPublicPlansRoute
+  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +151,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServisasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/orders': {
+      id: '/api/public/orders'
+      path: '/api/public/orders'
+      fullPath: '/api/public/orders'
+      preLoaderRoute: typeof ApiPublicOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/plans': {
+      id: '/api/public/plans'
+      path: '/api/public/plans'
+      fullPath: '/api/public/plans'
+      preLoaderRoute: typeof ApiPublicPlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track': {
+      id: '/api/public/track'
+      path: '/api/public/track'
+      fullPath: '/api/public/track'
+      preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnostikaRoute: DiagnostikaRoute,
   MonitoringasRoute: MonitoringasRoute,
   ServisasRoute: ServisasRoute,
+  ApiPublicOrdersRoute: ApiPublicOrdersRoute,
+  ApiPublicPlansRoute: ApiPublicPlansRoute,
+  ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
