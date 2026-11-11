@@ -25,7 +25,7 @@ function ArticlesList() {
   async function create() {
     const slug = `naujas-straipsnis-${Date.now().toString(36)}`;
     const { data, error } = await supabase.from("articles").insert({ title: "Naujas straipsnis", slug }).select("id").single();
-    if (error || !data) return toast.error("Nepavyko sukurti straipsnio");
+    if (error || !data) { toast.error("Nepavyko sukurti straipsnio"); return; }
     navigate({ to: "/admin/straipsniai/$id", params: { id: data.id } });
   }
 

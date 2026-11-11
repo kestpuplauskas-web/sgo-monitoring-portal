@@ -81,7 +81,7 @@ function UsersPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Select value={u.roles[0]} onValueChange={(v) => chg.mutate({ userId: u.id, role: v as AppRole })} disabled={u.isMe}>
+                      <Select value={u.roles[0] ?? "editor"} onValueChange={(v) => chg.mutate({ userId: u.id, role: v as AppRole })} disabled={u.isMe}>
                         <SelectTrigger className="h-9 w-44" aria-label="Rolė"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map((r) => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}</SelectContent>
                       </Select>

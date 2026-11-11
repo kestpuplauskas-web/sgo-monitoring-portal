@@ -72,20 +72,20 @@ function Editor({ article }: { article: Tables<"articles"> }) {
 
   async function remove() {
     const { error } = await supabase.from("articles").delete().eq("id", article.id);
-    if (error) return toast.error("Nepavyko ištrinti");
+    if (error) { toast.error("Nepavyko ištrinti"); return; }
     toast.success("Straipsnis ištrintas");
     qc.invalidateQueries({ queryKey: ["articles-admin"] });
     navigate({ to: "/admin/straipsniai" });
   }
 
   async function upload(file: File) {
-    if (!file.type.startsWith("image/")) return toast.error("Pasirinkite paveikslėlį (JPG, PNG, WebP).");
-    if (file.size > 5 * 1024 * 1024) return toast.error("Paveikslėlis per didelis – daugiausiai 5 MB.");
+    if (!file.type.startsWith("image/")) { toast.error("Pasirinkite paveikslėlį (JPG, PNG, WebP)."); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Paveikslėlis per didelis – daugiausiai 5 MB."); return; }
     setUploading(true);
     const path = `${article.id}/${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
     const { error } = await supabase.storage.from("articles").upload(path, file, { contentType: file.type });
     setUploading(false);
-    if (error) return toast.error("Nepavyko įkelti paveikslėlio");
+    if (error) { toast.error("Nepavyko įkelti paveikslėlio"); return; }
     const { data } = supabase.storage.from("articles").getPublicUrl(path);
     setF((x) => ({ ...x, cover_url: data.publicUrl }));
     toast.success("Paveikslėlis įkeltas – nepamirškite išsaugoti");

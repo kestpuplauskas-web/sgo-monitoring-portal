@@ -33,7 +33,7 @@ export const listStaff = createServerFn({ method: "GET" })
 
 export const inviteStaff = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
+  .validator((i: unknown) =>
     z
       .object({
         email: z.string().trim().email().max(255),
@@ -65,7 +65,7 @@ export const inviteStaff = createServerFn({ method: "POST" })
 
 export const setStaffRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ userId: z.string().uuid(), role: z.enum(ROLES) }).parse(i))
+  .validator((i: unknown) => z.object({ userId: z.string().uuid(), role: z.enum(ROLES) }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     if (data.userId === context.userId && data.role !== "admin") {
@@ -79,7 +79,7 @@ export const setStaffRole = createServerFn({ method: "POST" })
 
 export const removeStaff = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ userId: z.string().uuid() }).parse(i))
+  .validator((i: unknown) => z.object({ userId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     if (data.userId === context.userId) throw new Error("Negalite pašalinti savęs");
