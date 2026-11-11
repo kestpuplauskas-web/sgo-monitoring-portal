@@ -6,6 +6,7 @@ import { AuthShell } from "@/components/admin/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { passwordErrorMessage } from "@/lib/password-errors";
 
 export const Route = createFileRoute("/admin/slaptazodis")({
   ssr: false,
@@ -15,6 +16,8 @@ export const Route = createFileRoute("/admin/slaptazodis")({
       { name: "description", content: "Nustatykite SGO administravimo paskyros slaptažodį." },
       { property: "og:title", content: "Slaptažodžio nustatymas | SGO" },
       { property: "og:description", content: "Nustatykite SGO administravimo paskyros slaptažodį." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -41,11 +44,16 @@ function SetPasswordPage() {
     if (pw.length < 8) return setError("Slaptažodis turi būti bent 8 simbolių.");
     if (pw !== pw2) return setError("Slaptažodžiai nesutampa.");
     setBusy(true);
-    const { error } = await supabase.auth.updateUser({ password: pw });
-    setBusy(false);
-    if (error) return setError("Nepavyko išsaugoti. Nuoroda galėjo nebegalioti – paprašykite naujos.");
-    toast.success("Slaptažodis išsaugotas");
-    navigate({ to: "/admin", replace: true });
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password: pw });
+      if (updateError) return setError(passwordErrorMessage(updateError));
+      toast.success("Slaptažodis išsaugotas");
+      await navigate({ to: "/admin", replace: true });
+    } catch {
+      setError(passwordErrorMessage({}));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -56,7 +64,8 @@ function SetPasswordPage() {
         <form onSubmit={submit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="pw">Naujas slaptažodis</Label>
-            <Input id="pw" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} />
+            <Input id="pw" type="password" autoComplete="new-password" aria-describedby="pw-hint" value={pw} onChange={(e) => setPw(e.target.value)} />
+            <p id="pw-hint" className="text-xs text-muted-foreground">Bent 8 simboliai. Rinkitės ilgą, unikalų slaptažodį, nenaudojamą kitose paskyrose.</p>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="pw2">Pakartokite slaptažodį</Label>

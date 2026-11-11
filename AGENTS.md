@@ -33,3 +33,4 @@ use the editor.
 - The admin panel lives under src/routes/_authenticated/admin.* (client-only, gated to /admin/prisijungimas); section access per role is defined once in src/lib/admin-roles.ts so menu and pages stay consistent.
 - The static site talks to the backend only through /api/public/plans, /api/public/orders and /api/public/track, so plan prices, orders and analytics stay in the database while the HTML stays static.
 - Roles live in public.user_roles (admin/manager/editor) enforced by RLS via has_any_role; the first account ever created becomes admin automatically.
+- Classify password-update errors in a browser-safe helper so weak-password rejections never masquerade as expired invitations; preserve hosted password security checks.
