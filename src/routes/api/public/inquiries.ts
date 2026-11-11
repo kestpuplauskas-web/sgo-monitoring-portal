@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/public/inquiries")({
         } catch {
           return Response.json({ success: false, error: "Neteisinga užklausa" }, { status: 400 });
         }
-        if (typeof raw.hp_check === "string" && raw.hp_check.length > 0) {
+        if (typeof raw["hp_check"] === "string" && raw["hp_check"].length > 0) {
           return Response.json({ success: true });
         }
         const parsed = schema.safeParse(raw);
