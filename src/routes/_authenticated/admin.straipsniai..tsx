@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { Tables } from "@/integrations/supabase/types";
 
-export const Route = createFileRoute("/_authenticated/admin/straipsniai/$id")({
+export const Route = createFileRoute("/_authenticated/admin/straipsniai/")({
   component: ArticleEditorPage,
 });
 
