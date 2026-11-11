@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { BarChart3, ExternalLink, FilePenLine, Inbox, LogOut, Tag, Users, UserCog } from "lucide-react";
+import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canAccess, ROLE_LABELS, type Section } from "@/lib/admin-roles";
 import { useMyRoles } from "@/lib/use-my-roles";
@@ -31,6 +31,16 @@ function AdminLayout() {
     refetchInterval: 60_000,
     queryFn: async () => {
       const { count } = await supabase.from("plan_orders").select("id", { count: "exact", head: true }).eq("status", "nauja");
+      return count ?? 0;
+    },
+  });
+
+  const newInquiries = useQuery({
+    queryKey: ["inquiries-new-count"],
+    enabled: canAccess(roles, "inquiries"),
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { count } = await supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("status", "nauja");
       return count ?? 0;
     },
   });
@@ -80,6 +90,7 @@ function AdminLayout() {
               {show("orders") ? (
                 <NavItem to="/admin/uzsakymai" icon={<Inbox className="h-4 w-4" />} badge={newOrders.data}>Planų užsakymai</NavItem>
               ) : null}
+              {show("inquiries") ? <NavItem to="/admin/uzklausos" icon={<Mail className="h-4 w-4" />} badge={newInquiries.data}>Klientų užklausos</NavItem> : null}
               {show("clients") ? <NavItem to="/admin/klientai" icon={<Users className="h-4 w-4" />}>Klientų registras</NavItem> : null}
               {show("analytics") ? <NavItem to="/admin/analitika" icon={<BarChart3 className="h-4 w-4" />}>Puslapio analitika</NavItem> : null}
             </NavGroup>
