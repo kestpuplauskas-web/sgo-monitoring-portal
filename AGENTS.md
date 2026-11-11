@@ -30,3 +30,6 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - The sgo.lt public website is the original static HTML/CSS/JS kept in public/; routes /, /monitoringas, /diagnostika, /servisas only serve those files, so edit the HTML in public/ to change the site.
+- The admin panel lives under src/routes/_authenticated/admin.* (client-only, gated to /admin/prisijungimas); section access per role is defined once in src/lib/admin-roles.ts so menu and pages stay consistent.
+- The static site talks to the backend only through /api/public/plans, /api/public/orders and /api/public/track, so plan prices, orders and analytics stay in the database while the HTML stays static.
+- Roles live in public.user_roles (admin/manager/editor) enforced by RLS via has_any_role; the first account ever created becomes admin automatically.
