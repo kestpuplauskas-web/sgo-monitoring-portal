@@ -121,6 +121,7 @@
       <a class="nav-svc" href="/monitoringas/">Monitoringas</a>
       <a class="nav-svc" href="/diagnostika/">Diagnostika</a>
       <a class="nav-svc" href="/servisas/">Servisas</a>
+      <a href="/straipsniai">Straipsniai</a>
       <a href="#kontaktai">Kontaktai</a>
     </div>
     <div class="nav-links nav-right">
@@ -140,6 +141,7 @@
     <div class="nav-mobile-divider"></div>
     <a href="#planai">Planai</a>
     <a href="#duk">DUK</a>
+    <a href="/straipsniai">Straipsniai</a>
     <a href="#kontaktai">Kontaktai</a>
   </div>
 </nav>
@@ -1461,8 +1463,9 @@
       <button type="button" class="pl-close" aria-label="Uždaryti">×</button>
       <div id="pl-step-form">
         <h3 id="pl-m-title" style="font-family:Archivo,sans-serif;font-size:22px">Plano užsakymas</h3>
-        <div class="pl-sum"><span>Planas: <b id="pl-m-plan"></b><br><span id="pl-m-price"></span></span><span>Aktyvavimas<br><b>9 €</b></span></div>
+        <div class="pl-sum"><span>Planas: <b id="pl-m-plan"></b><br><span id="pl-m-price"></span></span><span>Aktyvavimas<br><b id="pl-m-act">9 €</b></span></div>
         <form class="pl-form" id="pl-form" novalidate>
+          <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Įmonė<input name="hp_company" tabindex="-1" autocomplete="off"></label></div>
           <label>Vardas ir pavardė<input name="name" autocomplete="name" required maxlength="100"><span class="pl-err" hidden>Įveskite vardą ir pavardę.</span></label>
           <label>El. paštas<input name="email" type="email" autocomplete="email" required maxlength="255"><span class="pl-err" hidden>Įveskite teisingą el. pašto adresą, pvz. vardas@pastas.lt.</span></label>
           <label>Telefonas<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="30"><span class="pl-err" hidden>Įveskite telefono numerį, pvz. +370 600 00000.</span></label>
@@ -1470,6 +1473,7 @@
           <label>Inverterio gamintojas (jei žinote)<input name="inverter" maxlength="60" placeholder="Pvz. Huawei, Solis, Fronius"></label>
           <label class="pl-check"><input type="checkbox" name="agree" required><span>Sutinku su <a href="#taisykles-ir-salygos" target="_blank">taisyklėmis ir sąlygomis</a> bei <a href="#privatumo-politika" target="_blank">privatumo politika</a>.</span></label>
           <span class="pl-err" id="pl-agree-err" hidden>Pažymėkite sutikimą, kad galėtume užbaigti užsakymą.</span>
+          <p class="pl-err" id="pl-submit-err" role="alert" hidden></p>
           <button type="submit" class="btn btn-solid pl-btn">Patvirtinti užsakymą</button>
           <p style="font-size:12.5px;color:var(--brand-slate);text-align:center">Dabar mokėti nereikia – sąskaitą atsiųsime el. paštu po elektrinės prijungimo.</p>
         </form>
@@ -1490,25 +1494,51 @@
   </div>
 <script>
 (function(){
-  var m=document.getElementById('pl-modal'),f=document.getElementById('pl-form'),last=null,plan='';
-  function open(b){last=b;plan=b.dataset.plan;document.getElementById('pl-m-plan').textContent=plan;document.getElementById('pl-m-price').textContent=b.dataset.price;
-    document.getElementById('pl-step-form').hidden=false;document.getElementById('pl-step-ok').hidden=true;m.hidden=false;document.body.style.overflow='hidden';setTimeout(function(){f.name.focus()},30);}
+  var m=document.getElementById('pl-modal'),f=document.getElementById('pl-form'),grid=document.querySelector('#planai .pl-grid'),last=null,cur=null;
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function eur(n){n=Number(n||0);return (Number.isInteger(n)?String(n):n.toFixed(2).replace('.',','))+' €'}
+  function render(plans){
+    grid.innerHTML=plans.map(function(p){
+      var feats=(p.features||[]).map(function(x){return '<li'+(/^Visos /.test(x)?' class="pl-inc"':'')+'>'+esc(x)+'</li>'}).join('');
+      return '<article class="pl-card'+(p.recommended?' pl-card--rec':'')+'">'+(p.recommended?'<span class="pl-badge">REKOMENDUOJAME</span>':'')+
+        '<h3 class="pl-name">'+esc(p.name)+'</h3><div class="pl-price"><b>'+eur(p.price)+'</b>'+(p.old_price!=null?'<s>'+eur(p.old_price)+'</s>':'')+'<span>'+esc(p.period_label)+'</span></div>'+
+        (p.promo?'<p class="pl-promo">'+esc(p.promo)+'</p>':'')+'<p class="pl-tag">'+esc(p.tagline)+'</p><ul class="pl-list">'+feats+'</ul>'+
+        (p.benefit?'<div class="pl-benefit"><strong>NAUDA JUMS</strong>'+esc(p.benefit)+'</div>':'')+
+        '<p class="pl-act">Vienkartinis aktyvavimas – '+eur(p.activation_fee)+'</p>'+
+        '<button type="button" class="btn '+(p.recommended?'btn-solid':'btn-ghost')+' pl-btn" data-plan-id="'+esc(p.id)+'">Pasirinkti planą</button></article>';
+    }).join('');
+    grid.querySelectorAll('[data-plan-id]').forEach(function(b){var p=plans.find(function(x){return x.id===b.dataset.planId});b.addEventListener('click',function(){open(b,p)})});
+  }
+  function open(b,p){last=b;cur=p;
+    document.getElementById('pl-m-plan').textContent=p?p.name:b.dataset.plan;
+    document.getElementById('pl-m-price').textContent=p?(eur(p.price)+' '+p.period_label+(p.promo?' · '+p.promo:'')):b.dataset.price;
+    document.getElementById('pl-m-act').textContent=eur(p?p.activation_fee:9);
+    document.getElementById('pl-step-form').hidden=false;document.getElementById('pl-step-ok').hidden=true;document.getElementById('pl-submit-err').hidden=true;
+    m.hidden=false;document.body.style.overflow='hidden';setTimeout(function(){f.name.focus()},30);}
   function close(){m.hidden=true;document.body.style.overflow='';if(last)last.focus();}
-  document.querySelectorAll('.pl-btn[data-plan]').forEach(function(b){b.addEventListener('click',function(){open(b)})});
+  document.querySelectorAll('.pl-btn[data-plan]').forEach(function(b){b.addEventListener('click',function(){open(b,null)})});
+  fetch('/api/public/plans').then(function(r){return r.json()}).then(function(d){if(d&&d.plans&&d.plans.length)render(d.plans)}).catch(function(){});
   m.querySelector('.pl-close').onclick=close;m.querySelector('.pl-done').onclick=close;
   m.addEventListener('click',function(e){if(e.target===m)close()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)close()});
   var rules={name:function(v){return v.trim().length>=2},email:function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())},phone:function(v){return /^[+\d][\d\s()-]{6,}$/.test(v.trim())},city:function(v){return v.trim().length>=2}};
   function check(inp){var ok=rules[inp.name](inp.value);inp.setAttribute('aria-invalid',ok?'false':'true');inp.parentNode.querySelector('.pl-err').hidden=ok;return ok;}
   Object.keys(rules).forEach(function(k){f[k].addEventListener('blur',function(){check(f[k])})});
-  f.addEventListener('submit',function(e){e.preventDefault();var ok=true,first=null;
+  f.addEventListener('submit',function(e){e.preventDefault();var ok=true,first=null,err=document.getElementById('pl-submit-err');err.hidden=true;
     Object.keys(rules).forEach(function(k){if(!check(f[k])){ok=false;first=first||f[k]}});
     var ag=f.agree.checked;document.getElementById('pl-agree-err').hidden=ag;if(!ag)ok=false;
     if(!ok){(first||f.agree).focus();return;}
-    var no='SGO-'+new Date().getFullYear()+'-'+Math.floor(1000+Math.random()*9000);
-    try{var list=JSON.parse(localStorage.getItem('sgo_orders')||'[]');list.push({no:no,plan:plan,name:f.name.value.trim(),email:f.email.value.trim(),phone:f.phone.value.trim(),city:f.city.value.trim(),inverter:f.inverter.value.trim(),at:new Date().toISOString()});localStorage.setItem('sgo_orders',JSON.stringify(list));}catch(_){}
-    document.getElementById('pl-ok-plan').textContent='„'+plan+'“';document.getElementById('pl-ok-no').textContent=no;document.getElementById('pl-ok-email').textContent=f.email.value.trim();
-    document.getElementById('pl-step-form').hidden=true;var ok2=document.getElementById('pl-step-ok');ok2.hidden=false;ok2.querySelector('h3').focus();f.reset();
+    if(!cur){err.textContent='Planų informacija dar kraunasi. Palaukite kelias sekundes ir bandykite dar kartą arba skambinkite +370 606 06222.';err.hidden=false;return;}
+    var btn=f.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Siunčiama…';
+    fetch('/api/public/orders',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({plan_id:cur.id,name:f.name.value,email:f.email.value,phone:f.phone.value,city:f.city.value,inverter:f.inverter.value,hp:f.hp_company.value})})
+      .then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})})
+      .then(function(res){
+        if(!res.ok)throw new Error(res.d&&res.d.error||'');
+        document.getElementById('pl-ok-plan').textContent='„'+res.d.plan_name+'“';document.getElementById('pl-ok-no').textContent=res.d.order_no;document.getElementById('pl-ok-email').textContent=f.email.value.trim();
+        document.getElementById('pl-step-form').hidden=true;var ok2=document.getElementById('pl-step-ok');ok2.hidden=false;ok2.querySelector('h3').focus();f.reset();
+      })
+      .catch(function(x){err.textContent=(x&&x.message?x.message+' ':'')+'Jei nepavyksta, skambinkite +370 606 06222 – užsakymą priimsime telefonu.';err.hidden=false;})
+      .finally(function(){btn.disabled=false;btn.textContent='Patvirtinti užsakymą';});
   });
 })();
 </script>
@@ -2148,5 +2178,6 @@ var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 })();
 </script>
 <!--End of Tawk.to Script-->
+<script>(function(){try{var k='sgo_vid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v)}var b=JSON.stringify({path:location.pathname,referrer:document.referrer,vid:v});if(navigator.sendBeacon)navigator.sendBeacon('/api/public/track',b);else fetch('/api/public/track',{method:'POST',body:b,keepalive:true})}catch(e){}})();</script>
 </body>
 </html>
