@@ -1,3 +1,4 @@
+import { PlanOrderButton } from "@/components/site/PlanOrderDialog";
 import { useEffect, type ReactNode } from "react";
 
 export function SiteChrome({ children }: { children: ReactNode }) {
@@ -29,9 +30,9 @@ export function SiteChrome({ children }: { children: ReactNode }) {
             <a href="/servisas/" className="hover:text-primary">Servisas</a>
             <a href="/straipsniai" className="text-primary">Straipsniai</a>
           </nav>
-          <a href="/#planai" className="inline-flex min-h-10 items-center rounded-full bg-primary px-5 font-mono text-sm font-bold text-primary-foreground">
+          <PlanOrderButton className="inline-flex min-h-10 items-center rounded-full bg-primary px-5 font-mono text-sm font-bold text-primary-foreground">
             Pasirinkti planą
-          </a>
+          </PlanOrderButton>
         </div>
       </header>
       {children}

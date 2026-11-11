@@ -19,7 +19,13 @@ function inline(text: string): ReactNode[] {
 }
 
 export function ArticleBody({ body }: { body: string }) {
-  const blocks = body.replace(/\r/g, "").split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const normalized = body
+    .replace(/\r/g, "")
+    // headings always stand alone; a list always starts a new block
+    .replace(/^(#{2,3} .*)$/gm, "\n$1\n")
+    .replace(/^(?!- )(.+)\n(?=- )/gm, "$1\n\n")
+    .replace(/^(- .+)\n(?!- )(?=\S)/gm, "$1\n\n");
+  const blocks = normalized.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   return (
     <div className="grid gap-5 text-[17px] leading-[1.75] text-foreground/90">
       {blocks.map((b, i) => {
