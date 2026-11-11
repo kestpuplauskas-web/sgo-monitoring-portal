@@ -14,16 +14,281 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          body: string
+          cover_url: string
+          created_at: string
+          excerpt: string
+          id: string
+          meta_description: string
+          meta_title: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          cover_url?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          meta_description?: string
+          meta_title?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          cover_url?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          meta_description?: string
+          meta_title?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          city: string
+          created_at: string
+          email: string
+          id: string
+          inverter: string
+          name: string
+          notes: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          email: string
+          id?: string
+          inverter?: string
+          name: string
+          notes?: string
+          phone?: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          email?: string
+          id?: string
+          inverter?: string
+          name?: string
+          notes?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          created_at: string
+          device: string
+          id: number
+          path: string
+          referrer: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string
+          device?: string
+          id?: never
+          path: string
+          referrer?: string
+          visitor_id?: string
+        }
+        Update: {
+          created_at?: string
+          device?: string
+          id?: never
+          path?: string
+          referrer?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
+      plan_orders: {
+        Row: {
+          admin_notes: string
+          city: string
+          client_id: string | null
+          created_at: string
+          email: string
+          id: string
+          inverter: string
+          name: string
+          order_no: string
+          phone: string
+          plan_id: string | null
+          plan_name: string
+          price_label: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string
+          city: string
+          client_id?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          inverter?: string
+          name: string
+          order_no: string
+          phone: string
+          plan_id?: string | null
+          plan_name: string
+          price_label?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string
+          city?: string
+          client_id?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          inverter?: string
+          name?: string
+          order_no?: string
+          phone?: string
+          plan_id?: string | null
+          plan_name?: string
+          price_label?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_orders_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          activation_fee: number
+          active: boolean
+          benefit: string
+          features: string[]
+          id: string
+          name: string
+          old_price: number | null
+          period_label: string
+          price: number
+          promo: string
+          recommended: boolean
+          slug: string
+          sort_order: number
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          activation_fee?: number
+          active?: boolean
+          benefit?: string
+          features?: string[]
+          id?: string
+          name: string
+          old_price?: number | null
+          period_label?: string
+          price?: number
+          promo?: string
+          recommended?: boolean
+          slug: string
+          sort_order?: number
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          activation_fee?: number
+          active?: boolean
+          benefit?: string
+          features?: string[]
+          id?: string
+          name?: string
+          old_price?: number | null
+          period_label?: string
+          price?: number
+          promo?: string
+          recommended?: boolean
+          slug?: string
+          sort_order?: number
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_exists: { Args: never; Returns: boolean }
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "manager" | "editor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +415,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "manager", "editor"],
+    },
   },
 } as const
