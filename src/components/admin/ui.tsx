@@ -8,7 +8,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
         <h1 className="font-display text-2xl font-extrabold break-words lg:text-3xl">{title}</h1>
         {description ? <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
       </div>
-      {actions ? <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">{actions}</div> : null}
+      {actions ? <div className="grid min-w-0 grid-cols-1 gap-2 [&>a]:min-h-11 sm:flex sm:flex-wrap">{actions}</div> : null}
     </div>
   );
 }

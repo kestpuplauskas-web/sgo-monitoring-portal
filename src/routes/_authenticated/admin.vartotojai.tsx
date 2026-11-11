@@ -72,8 +72,8 @@ function UsersPage() {
   return (
     <>
       <PageHeader title="Vartotojai" description="Pakvieskite komandos narius ir nurodykite, ką jie gali matyti." />
-      <PageBody className="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div>
+      <PageBody className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0">
           {staff.isLoading ? (
             <div className="grid gap-2">{[0, 1].map((i) => <Skeleton key={i} className="h-16" />)}</div>
           ) : staff.isError ? (
