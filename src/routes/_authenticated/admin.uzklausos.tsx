@@ -17,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/uzklausos")({
 
 const STATUSES = [
   { value: "nauja", label: "Nauja" },
+  { value: "perziureta", label: "Peržiūrėta" },
   { value: "susisiekta", label: "Atsakyta" },
   { value: "uzdaryta", label: "Uždaryta" },
 ];
@@ -55,6 +56,17 @@ function InquiriesPage() {
     onError: () => toast.error("Nepavyko išsaugoti"),
   });
 
+  const markSeen = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("inquiries").update({ status: "perziureta" }).eq("id", id).eq("status", "nauja");
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["inquiries"] });
+      qc.invalidateQueries({ queryKey: ["inquiries-new-count"] });
+    },
+  });
+
   const rows = (list.data ?? []).filter((r) => filter === "all" || r.status === filter);
 
   return (
@@ -73,7 +85,11 @@ function InquiriesPage() {
         ) : (
           <Panel className="divide-y divide-border p-0">
             {rows.map((r) => (
-              <button key={r.id} type="button" onClick={() => { setOpen(r); setNotes(r.notes); }} className="flex w-full items-start justify-between gap-4 p-4 text-left hover:bg-muted/40">
+              <button key={r.id} type="button" onClick={() => {
+                const seen = r.status === "nauja" ? { ...r, status: "perziureta" } : r;
+                setOpen(seen); setNotes(r.notes);
+                if (r.status === "nauja") markSeen.mutate(r.id);
+              }} className="flex w-full items-start justify-between gap-4 p-4 text-left hover:bg-muted/40">
                 <div className="min-w-0">
                   <p className="font-semibold">{r.name} {r.service ? <span className="font-normal text-muted-foreground">· {r.service}</span> : null}</p>
                   <p className="truncate text-sm text-muted-foreground">{r.message}</p>
