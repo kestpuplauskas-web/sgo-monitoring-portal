@@ -18,6 +18,8 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AdminPrisijungimasRouteImport } from './routes/admin.prisijungimas'
 import { Route as AdminSlaptazodisRouteImport } from './routes/admin.slaptazodis'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminKlientaiRouteImport } from './routes/_authenticated/admin.klientai'
+import { Route as AuthenticatedAdminUzsakymaiRouteImport } from './routes/_authenticated/admin.uzsakymai'
 import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
 import { Route as ApiPublicPlansRouteImport } from './routes/api/public/plans'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -66,6 +68,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminKlientaiRoute =
+  AuthenticatedAdminKlientaiRouteImport.update({
+    id: '/klientai',
+    path: '/klientai',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUzsakymaiRoute =
+  AuthenticatedAdminUzsakymaiRouteImport.update({
+    id: '/uzsakymai',
+    path: '/uzsakymai',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicOrdersRoute = ApiPublicOrdersRouteImport.update({
   id: '/api/public/orders',
   path: '/api/public/orders',
@@ -90,6 +104,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
+  '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -102,6 +118,8 @@ export interface FileRoutesByTo {
   '/servisas': typeof ServisasRoute
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
+  '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -117,6 +135,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
+  '/_authenticated/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
+  '/_authenticated/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -132,6 +152,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/admin/klientai'
+    | '/admin/uzsakymai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
@@ -144,6 +166,8 @@ export interface FileRouteTypes {
     | '/servisas'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/admin/klientai'
+    | '/admin/uzsakymai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
@@ -158,6 +182,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
+    | '/_authenticated/admin/klientai'
+    | '/_authenticated/admin/uzsakymai'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
@@ -242,6 +268,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/klientai': {
+      id: '/_authenticated/admin/klientai'
+      path: '/klientai'
+      fullPath: '/admin/klientai'
+      preLoaderRoute: typeof AuthenticatedAdminKlientaiRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/uzsakymai': {
+      id: '/_authenticated/admin/uzsakymai'
+      path: '/uzsakymai'
+      fullPath: '/admin/uzsakymai'
+      preLoaderRoute: typeof AuthenticatedAdminUzsakymaiRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/orders': {
       id: '/api/public/orders'
       path: '/api/public/orders'
@@ -267,10 +307,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminKlientaiRoute: typeof AuthenticatedAdminKlientaiRoute
+  AuthenticatedAdminUzsakymaiRoute: typeof AuthenticatedAdminUzsakymaiRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminKlientaiRoute: AuthenticatedAdminKlientaiRoute,
+  AuthenticatedAdminUzsakymaiRoute: AuthenticatedAdminUzsakymaiRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
