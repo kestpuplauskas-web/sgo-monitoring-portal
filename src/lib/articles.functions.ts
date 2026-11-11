@@ -13,7 +13,7 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(a
 });
 
 export const getPublishedArticle = createServerFn({ method: "GET" })
-  .inputValidator((i: unknown) => z.object({ slug: z.string().max(200) }).parse(i))
+  .validator((i: unknown) => z.object({ slug: z.string().max(200) }).parse(i))
   .handler(async ({ data }) => {
     const { createPublicClient } = await import("@/lib/public-db.server");
     const { data: a } = await createPublicClient()
