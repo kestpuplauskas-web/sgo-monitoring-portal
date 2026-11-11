@@ -63,7 +63,15 @@ export const Route = createFileRoute("/api/public/orders")({
             city: d.city,
             inverter: d.inverter,
           });
-          if (!error) return Response.json({ order_no, plan_name: plan.name });
+          if (!error) {
+            try {
+              const { sendOrderConfirmation } = await import("@/lib/order-email.server");
+              await sendOrderConfirmation({ to: email, name: d.name, order_no, plan_name: plan.name, price_label: priceLabel(plan) });
+            } catch (e) {
+              console.error("Order email error", e);
+            }
+            return Response.json({ order_no, plan_name: plan.name });
+          }
           if (!String(error.message).includes("duplicate")) break;
         }
         return Response.json({ error: "Nepavyko išsaugoti užsakymo. Bandykite dar kartą." }, { status: 500 });
