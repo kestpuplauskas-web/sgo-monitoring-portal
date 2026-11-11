@@ -10,9 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as DiagnostikaRouteImport } from './routes/diagnostika'
 import { Route as MonitoringasRouteImport } from './routes/monitoringas'
 import { Route as ServisasRouteImport } from './routes/servisas'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AdminPrisijungimasRouteImport } from './routes/admin.prisijungimas'
+import { Route as AdminSlaptazodisRouteImport } from './routes/admin.slaptazodis'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
 import { Route as ApiPublicPlansRouteImport } from './routes/api/public/plans'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -20,6 +25,10 @@ import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnostikaRoute = DiagnostikaRouteImport.update({
@@ -36,6 +45,26 @@ const ServisasRoute = ServisasRouteImport.update({
   id: '/servisas',
   path: '/servisas',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AdminPrisijungimasRoute = AdminPrisijungimasRouteImport.update({
+  id: '/admin/prisijungimas',
+  path: '/admin/prisijungimas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSlaptazodisRoute = AdminSlaptazodisRouteImport.update({
+  id: '/admin/slaptazodis',
+  path: '/admin/slaptazodis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const ApiPublicOrdersRoute = ApiPublicOrdersRouteImport.update({
   id: '/api/public/orders',
@@ -58,28 +87,40 @@ export interface FileRoutesByFullPath {
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/prisijungimas': typeof AdminPrisijungimasRoute
+  '/admin/slaptazodis': typeof AdminSlaptazodisRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/admin/prisijungimas': typeof AdminPrisijungimasRoute
+  '/admin/slaptazodis': typeof AdminSlaptazodisRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
   '/servisas': typeof ServisasRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/prisijungimas': typeof AdminPrisijungimasRoute
+  '/admin/slaptazodis': typeof AdminSlaptazodisRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,34 +129,49 @@ export interface FileRouteTypes {
     | '/diagnostika'
     | '/monitoringas'
     | '/servisas'
+    | '/admin'
+    | '/admin/prisijungimas'
+    | '/admin/slaptazodis'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/diagnostika'
     | '/monitoringas'
     | '/servisas'
+    | '/admin/prisijungimas'
+    | '/admin/slaptazodis'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/diagnostika'
     | '/monitoringas'
     | '/servisas'
+    | '/_authenticated/admin'
+    | '/admin/prisijungimas'
+    | '/admin/slaptazodis'
     | '/api/public/orders'
     | '/api/public/plans'
     | '/api/public/track'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   DiagnostikaRoute: typeof DiagnostikaRoute
   MonitoringasRoute: typeof MonitoringasRoute
   ServisasRoute: typeof ServisasRoute
+  AdminPrisijungimasRoute: typeof AdminPrisijungimasRoute
+  AdminSlaptazodisRoute: typeof AdminSlaptazodisRoute
   ApiPublicOrdersRoute: typeof ApiPublicOrdersRoute
   ApiPublicPlansRoute: typeof ApiPublicPlansRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -128,6 +184,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnostika': {
@@ -150,6 +213,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/servisas'
       preLoaderRoute: typeof ServisasRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/admin/prisijungimas': {
+      id: '/admin/prisijungimas'
+      path: '/admin/prisijungimas'
+      fullPath: '/admin/prisijungimas'
+      preLoaderRoute: typeof AdminPrisijungimasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/slaptazodis': {
+      id: '/admin/slaptazodis'
+      path: '/admin/slaptazodis'
+      fullPath: '/admin/slaptazodis'
+      preLoaderRoute: typeof AdminSlaptazodisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/api/public/orders': {
       id: '/api/public/orders'
@@ -175,11 +266,36 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   DiagnostikaRoute: DiagnostikaRoute,
   MonitoringasRoute: MonitoringasRoute,
   ServisasRoute: ServisasRoute,
+  AdminPrisijungimasRoute: AdminPrisijungimasRoute,
+  AdminSlaptazodisRoute: AdminSlaptazodisRoute,
   ApiPublicOrdersRoute: ApiPublicOrdersRoute,
   ApiPublicPlansRoute: ApiPublicPlansRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
