@@ -95,6 +95,51 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiries: {
+        Row: {
+          city: string
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          notes: string
+          page: string
+          phone: string
+          power: string
+          service: string
+          status: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          notes?: string
+          page?: string
+          phone?: string
+          power?: string
+          service?: string
+          status?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          notes?: string
+          page?: string
+          phone?: string
+          power?: string
+          service?: string
+          status?: string
+        }
+        Relationships: []
+      }
       page_views: {
         Row: {
           created_at: string

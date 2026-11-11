@@ -47,7 +47,7 @@ export function StatusPill({ status }: { status: string }) {
     aktyvuota: "bg-chart-2/20 text-chart-2",
     atsaukta: "bg-destructive/15 text-destructive",
   };
-  const label: Record<string, string> = { nauja: "Nauja", susisiekta: "Susisiekta", aktyvuota: "Aktyvuota", atsaukta: "Atšaukta" };
+  const label: Record<string, string> = { nauja: "Nauja", susisiekta: "Susisiekta", aktyvuota: "Aktyvuota", atsaukta: "Atšaukta", uzdaryta: "Uždaryta" };
   return (
     <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", map[status] ?? "bg-muted text-muted-foreground")}>
       {label[status] ?? status}
