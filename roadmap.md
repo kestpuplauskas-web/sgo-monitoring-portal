@@ -6,4 +6,4 @@
 # Plan visibility
 - [x] Move plans after the problem introduction, ahead of partner and service details.
 - [x] Make plan selection the main opening action and consultation secondary.
-- [ ] Verify desktop and phone plan selection.
+- [x] Verify desktop and phone plan selection.
