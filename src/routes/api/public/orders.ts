@@ -10,7 +10,7 @@ const schema = z.object({
   city: z.string().trim().min(2).max(150),
   inverter: z.string().trim().max(60).optional().default(""),
   installer: z.string().trim().max(100).optional().default(""),
-  hp: z.string().max(0).optional().default(""),
+  hp: z.string().max(500).optional().default(""), // ignored: phone autofill may fill it
 });
 
 export const Route = createFileRoute("/api/public/orders")({

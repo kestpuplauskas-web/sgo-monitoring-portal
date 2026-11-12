@@ -10,7 +10,7 @@ const schema = z.object({
   power: z.string().trim().max(50).optional().default(""),
   message: z.string().trim().min(2).max(5000),
   page: z.string().trim().max(200).optional().default(""),
-  hp_check: z.string().max(0).optional().default(""),
+  hp_check: z.string().max(500).optional().default(""),
 });
 
 export const Route = createFileRoute("/api/public/inquiries")({
