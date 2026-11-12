@@ -1347,6 +1347,7 @@
 <script>
 (function(){
   var m=document.getElementById('pl-modal'),f=document.getElementById('pl-form'),grid=document.querySelector('#planai .pl-grid'),last=null,cur=null;
+  document.body.appendChild(m);
   function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function eur(n){n=Number(n||0);return (Number.isInteger(n)?String(n):n.toFixed(2).replace('.',','))+' €'}
   function render(plans){
