@@ -1,0 +1,2 @@
+ALTER TABLE public.plan_orders ADD COLUMN installer text NOT NULL DEFAULT '';
+COMMENT ON COLUMN public.plan_orders.installer IS 'Rangovo, įrengusio kliento saulės elektrinę, pavadinimas (neprivalomas, pildo klientas užsakymo formoje)';

@@ -9,6 +9,7 @@ const schema = z.object({
   phone: z.string().trim().regex(/^[+\d][\d\s()-]{6,29}$/),
   city: z.string().trim().min(2).max(150),
   inverter: z.string().trim().max(60).optional().default(""),
+  installer: z.string().trim().max(100).optional().default(""),
   hp: z.string().max(0).optional().default(""),
 });
 
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/api/public/orders")({
             phone: d.phone,
             city: d.city,
             inverter: d.inverter,
+            installer: d.installer,
           });
           if (!error) {
             try {

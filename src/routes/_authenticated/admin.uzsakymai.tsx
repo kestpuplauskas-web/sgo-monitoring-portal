@@ -170,6 +170,7 @@ function OrderDialog({ order, onClose, onSave, saving }: { order: Order; onClose
           <dt className="text-muted-foreground">El. paštas</dt><dd><a className="text-primary hover:underline" href={`mailto:${order.email}`}>{order.email}</a></dd>
           <dt className="text-muted-foreground">Telefonas</dt><dd><a className="text-primary hover:underline" href={`tel:${order.phone.replace(/\s/g, "")}`}>{order.phone}</a></dd>
           <dt className="text-muted-foreground">Vieta</dt><dd>{order.city}</dd>
+          <dt className="text-muted-foreground">Rangovas</dt><dd>{order.installer || "—"}</dd>
           <dt className="text-muted-foreground">Inverteris</dt><dd>{order.inverter || "—"}</dd>
         </dl>
         <div className="grid gap-2">

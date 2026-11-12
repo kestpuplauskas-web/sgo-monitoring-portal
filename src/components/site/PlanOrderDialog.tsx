@@ -23,7 +23,7 @@ export function PlanOrderButton({ className, children }: { className?: string; c
 function PlanOrderDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const [plans, setPlans] = useState<Plan[] | null>(null);
   const [planId, setPlanId] = useState("");
-  const [f, setF] = useState({ name: "", email: "", phone: "", city: "", inverter: "" });
+  const [f, setF] = useState({ name: "", email: "", phone: "", city: "", installer: "", inverter: "" });
   const [agree, setAgree] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
@@ -76,7 +76,7 @@ function PlanOrderDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o && done) { setDone(null); setF({ name: "", email: "", phone: "", city: "", inverter: "" }); setAgree(false); setTouched({}); } }}>
+    <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o && done) { setDone(null); setF({ name: "", email: "", phone: "", city: "", installer: "", inverter: "" }); setAgree(false); setTouched({}); } }}>
       <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         {done ? (
           <div className="text-center">
@@ -114,6 +114,7 @@ function PlanOrderDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
             {field("email", "El. paštas", { type: "email", autoComplete: "email", maxLength: 255 })}
             {field("phone", "Telefonas", { type: "tel", autoComplete: "tel", inputMode: "tel", maxLength: 30 })}
             {field("city", "Elektrinės vieta (miestas ar adresas)", { autoComplete: "address-level2", maxLength: 150 })}
+            {field("installer", "Rangovas, įrengęs elektrinę (neprivaloma)", { maxLength: 100, placeholder: "Pvz. įmonės pavadinimas" })}
             {field("inverter", "Inverterio gamintojas (neprivaloma)", { maxLength: 60 })}
             <label className="flex items-start gap-2 text-sm">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} className="mt-0.5" />

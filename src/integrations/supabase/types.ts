@@ -175,6 +175,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          installer: string
           inverter: string
           name: string
           order_no: string
@@ -192,6 +193,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          installer?: string
           inverter?: string
           name: string
           order_no: string
@@ -209,6 +211,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          installer?: string
           inverter?: string
           name?: string
           order_no?: string
