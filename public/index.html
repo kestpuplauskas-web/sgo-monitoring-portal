@@ -1513,6 +1513,7 @@
           <label>El. paštas<input name="email" type="email" autocomplete="email" required maxlength="255"><span class="pl-err" hidden>Įveskite teisingą el. pašto adresą, pvz. vardas@pastas.lt.</span></label>
           <label>Telefonas<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="30"><span class="pl-err" hidden>Įveskite telefono numerį, pvz. +370 600 00000.</span></label>
           <label>Elektrinės adresas / miestas<input name="city" autocomplete="address-level2" required maxlength="150"><span class="pl-err" hidden>Nurodykite, kur yra elektrinė.</span></label>
+          <label>Rangovas, įrengęs elektrinę (jei žinote)<input name="installer" maxlength="100" placeholder="Pvz. įmonės pavadinimas"></label>
           <label>Inverterio gamintojas (jei žinote)<input name="inverter" maxlength="60" placeholder="Pvz. Huawei, Solis, Fronius"></label>
           <label class="pl-check"><input type="checkbox" name="agree" required><span>Sutinku su <a href="#taisykles-ir-salygos" target="_blank">taisyklėmis ir sąlygomis</a> bei <a href="#privatumo-politika" target="_blank">privatumo politika</a>.</span></label>
           <span class="pl-err" id="pl-agree-err" hidden>Pažymėkite sutikimą, kad galėtume užbaigti užsakymą.</span>
@@ -1573,7 +1574,7 @@
     if(!ok){(first||f.agree).focus();return;}
     if(!cur){err.textContent='Planų informacija dar kraunasi. Palaukite kelias sekundes ir bandykite dar kartą arba skambinkite +370 606 06222.';err.hidden=false;return;}
     var btn=f.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Siunčiama…';
-    fetch('/api/public/orders',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({plan_id:cur.id,name:f.name.value,email:f.email.value,phone:f.phone.value,city:f.city.value,inverter:f.inverter.value,hp:f.hp_company.value})})
+    fetch('/api/public/orders',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({plan_id:cur.id,name:f.name.value,email:f.email.value,phone:f.phone.value,city:f.city.value,installer:f.installer.value,inverter:f.inverter.value,hp:f.hp_company.value})})
       .then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})})
       .then(function(res){
         if(!res.ok)throw new Error(res.d&&res.d.error||'');
