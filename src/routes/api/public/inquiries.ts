@@ -10,7 +10,7 @@ const schema = z.object({
   power: z.string().trim().max(50).optional().default(""),
   message: z.string().trim().min(2).max(5000),
   page: z.string().trim().max(200).optional().default(""),
-  hp_check: z.string().max(0).optional().default(""),
+  hp_check: z.string().max(500).optional().default(""),
 });
 
 export const Route = createFileRoute("/api/public/inquiries")({
@@ -27,9 +27,6 @@ export const Route = createFileRoute("/api/public/inquiries")({
           }
         } catch {
           return Response.json({ success: false, error: "Neteisinga užklausa" }, { status: 400 });
-        }
-        if (typeof raw["hp_check"] === "string" && raw["hp_check"].length > 0) {
-          return Response.json({ success: true });
         }
         const parsed = schema.safeParse(raw);
         if (!parsed.success) {
