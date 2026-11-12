@@ -35,3 +35,4 @@ use the editor.
 - Roles live in public.user_roles (admin/manager/editor) enforced by RLS via has_any_role; the first account ever created becomes admin automatically.
 - Classify password-update errors in a browser-safe helper so weak-password rejections never masquerade as expired invitations; preserve hosted password security checks.
 - Admin navigation uses the same role-filtered links in the desktop sidebar and mobile drawer; mobile order/client cards share the existing queries and dialogs to avoid behavioral divergence.
+- Mount the static site's plan-order modal directly under body so section stacking contexts cannot place navigation above its controls.
