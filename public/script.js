@@ -1,3 +1,29 @@
+
+function showInquiryOk(email){
+  var prev=document.activeElement;
+  var m=document.createElement('div');
+  m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','iq-ok-t');
+  m.style.cssText='position:fixed;inset:0;z-index:11000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(3,8,10,.78);backdrop-filter:blur(6px)';
+  var e=String(email||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});
+  m.innerHTML='<div style="position:relative;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;background:var(--brand-panel,#0b1a1c);border:1px solid rgba(31,184,148,.3);border-radius:16px;padding:32px 28px 28px;color:var(--brand-mist,#e6f1ef);text-align:center;font-family:inherit">'+
+    '<button type="button" data-x aria-label="Uždaryti" style="position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;background:none;color:inherit;font-size:26px;cursor:pointer;border-radius:8px">×</button>'+
+    '<div aria-hidden="true" style="width:64px;height:64px;margin:0 auto 16px;border-radius:50%;background:rgba(31,184,148,.15);border:2px solid #1fb894;color:#1fb894;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700">✓</div>'+
+    '<h3 id="iq-ok-t" tabindex="-1" style="font-family:Archivo,sans-serif;font-size:24px;margin:0 0 8px;color:#fff">Užklausa gauta!</h3>'+
+    '<p style="margin:0 0 20px;font-size:15px;line-height:1.55">Ačiū, kad kreipėtės. Jūsų žinutė jau pas SGO komandą.</p>'+
+    '<ol style="text-align:left;margin:0 0 20px;padding:16px 16px 16px 36px;border-radius:12px;background:rgba(31,184,148,.08);border:1px solid rgba(31,184,148,.2);font-size:14px;line-height:1.6">'+
+      '<li>Užklausą peržiūrėsime ir įvertinsime Jūsų situaciją.</li>'+
+      '<li>Per 1 darbo dieną susisieksime'+(e?' el. paštu <b>'+e+'</b> arba':'')+' telefonu.</li>'+
+      '<li>Pasiūlysime sprendimą ir aiškią kainą.</li>'+
+    '</ol>'+
+    '<p style="margin:0 0 20px;font-size:13.5px;color:var(--brand-slate,#9fb3b0)">Skubu? Skambinkite <a href="tel:+37060606222" style="color:#1fb894;font-weight:600">+370 606 06222</a></p>'+
+    '<button type="button" data-x class="btn btn-solid" style="width:100%;min-height:48px">Puiku, supratau</button></div>';
+  document.body.appendChild(m);document.body.style.overflow='hidden';
+  function close(){document.removeEventListener('keydown',k);m.remove();document.body.style.overflow='';if(prev&&prev.focus)prev.focus();}
+  function k(ev){if(ev.key==='Escape')close();}
+  document.addEventListener('keydown',k);
+  m.addEventListener('click',function(ev){if(ev.target===m||ev.target.closest('[data-x]'))close();});
+  setTimeout(function(){m.querySelector('h3').focus();},30);
+}
 (function(){
   /* Desktop pointer glow — intentionally uses mousemove rather than
      pointer:fine detection so it also works in desktop emulation. */
@@ -330,6 +356,7 @@
       })
       .then(function(){
         showStatus('Ačiū! Žinutė išsiųsta — susisieksime kuo greičiau.', 'ok');
+        showInquiryOk(email);
         if (window.sgoTrackLead) window.sgoTrackLead();
         form.reset();
       })
