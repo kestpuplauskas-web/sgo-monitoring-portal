@@ -298,7 +298,6 @@
       '',
       message
     ].join('\n');
-    var mailtoUrl = 'mailto:info@sgo.lt?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Siunčiama...';
@@ -335,12 +334,7 @@
         form.reset();
       })
       .catch(function(){
-        if (hasFiles) {
-          /* a mailto: link cannot carry the files, so explain instead */
-          showStatus(serverError || 'Nepavyko išsiųsti. Pabandykite dar kartą arba parašykite mums info@sgo.lt.', 'err');
-          return;
-        }
-        window.location.href = mailtoUrl;
+        showStatus(serverError || 'Nepavyko išsiųsti. Pabandykite dar kartą arba skambinkite +370 606 06222.', 'err');
       })
       .finally(function(){
         submitBtn.disabled = false;
