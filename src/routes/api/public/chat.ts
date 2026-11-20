@@ -34,6 +34,9 @@ async function escalate(s: { id: string; visitor_name: string; visitor_email: st
   await notifyHandoff({ sessionId: s.id, lastMessage: last, name: s.visitor_name, email: s.visitor_email, origin });
 }
 
+const MAX_AI_MESSAGES = 15;
+const LIMIT_MSG = "Kad galėtume tiksliau padėti, palikite savo telefono numerį arba paspauskite „Noriu pasikalbėti su specialistu“ — SGO specialistas su jumis susisieks. Taip pat galite skambinti +370 606 06222.";
+
 export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
@@ -74,11 +77,18 @@ export const Route = createFileRoute("/api/public/chat")({
           return Response.json({ ok: true });
         }
 
-        // send
+        // send — anti-bot guards
+        const { data: lastV } = await a.from("chat_messages").select("created_at").eq("session_id", s.id).eq("role", "visitor").order("created_at", { ascending: false }).limit(1);
+        if (lastV?.[0] && Date.now() - new Date(lastV[0].created_at).getTime() < 3000) return Response.json({ error: "too_fast" }, { status: 429 });
+        const { count: vCount } = await a.from("chat_messages").select("id", { count: "exact", head: true }).eq("session_id", s.id).eq("role", "visitor");
         await a.from("chat_messages").insert({ session_id: s.id, role: "visitor", content: d.text });
         await a.from("chat_sessions").update({ last_message: d.text, last_message_at: new Date().toISOString(), status: s.status === "closed" ? "agent" : s.status }).eq("id", s.id);
         const status = s.status === "closed" ? "agent" : s.status;
         if (status !== "agent") return Response.json({ ok: true });
+        if ((vCount ?? 0) >= MAX_AI_MESSAGES) {
+          await a.from("chat_messages").insert({ session_id: s.id, role: "agent", content: LIMIT_MSG });
+          return Response.json({ ok: true });
+        }
 
         const { agentReply, wantsHuman } = await import("@/lib/chat.server");
         if (wantsHuman(d.text)) { await escalate(s, d.text, origin); return Response.json({ ok: true }); }
