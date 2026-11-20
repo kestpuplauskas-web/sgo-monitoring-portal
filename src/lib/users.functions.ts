@@ -19,7 +19,7 @@ export const listStaff = createServerFn({ method: "GET" })
     const byUser = new Map<string, string[]>();
     for (const r of roles ?? []) byUser.set(r.user_id, [...(byUser.get(r.user_id) ?? []), r.role]);
     return (list?.users ?? [])
-      .filter((u) => byUser.has(u.id))
+      .filter((u) => (byUser.get(u.id) ?? []).some((r) => r !== "partner"))
       .map((u) => ({
         id: u.id,
         email: u.email ?? "",
@@ -85,5 +85,40 @@ export const removeStaff = createServerFn({ method: "POST" })
     if (data.userId === context.userId) throw new Error("Negalite pašalinti savęs");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+    return { ok: true };
+  });
+
+export const invitePartner = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((i: unknown) =>
+    z.object({
+      email: z.string().trim().email().max(255),
+      company: z.string().trim().min(1).max(200),
+      contact_name: z.string().trim().max(100).default(""),
+      phone: z.string().trim().max(30).default(""),
+      redirectTo: z.string().url(),
+    }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: ok } = await context.supabase.rpc("has_any_role", { _user_id: context.userId, _roles: ["admin", "manager"] });
+    if (!ok) throw new Error("Neturite teisės kviesti partnerių");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const email = data.email.toLowerCase();
+    let userId: string | undefined;
+    const { data: inv, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+      redirectTo: data.redirectTo,
+      data: { full_name: data.contact_name },
+    });
+    if (inv?.user) userId = inv.user.id;
+    if (error) {
+      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 });
+      userId = list?.users.find((u) => u.email?.toLowerCase() === email)?.id;
+      if (!userId) throw new Error("Nepavyko išsiųsti kvietimo. Patikrinkite el. pašto adresą.");
+    }
+    const { data: existing } = await supabaseAdmin.from("partners").select("id").eq("user_id", userId!).maybeSingle();
+    if (existing) await supabaseAdmin.from("partners").update({ status: "aktyvus", company: data.company }).eq("id", existing.id);
+    else await supabaseAdmin.from("partners").insert({ user_id: userId!, email, company: data.company, contact_name: data.contact_name, phone: data.phone, status: "aktyvus" });
+    const { data: hasRole } = await supabaseAdmin.from("user_roles").select("id").eq("user_id", userId!).eq("role", "partner").maybeSingle();
+    if (!hasRole) await supabaseAdmin.from("user_roles").insert({ user_id: userId!, role: "partner" });
     return { ok: true };
   });

@@ -36,6 +36,20 @@
       "when": 1795162360088,
       "tag": "0004_chat_replica_full",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795164844789,
+      "tag": "0005_add_partner_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795164864720,
+      "tag": "0006_partners",
+      "breakpoints": true
     }
   ]
 }

@@ -37,3 +37,5 @@ use the editor.
 - Admin navigation uses the same role-filtered links in the desktop sidebar and mobile drawer; mobile order/client cards share the existing queries and dialogs to avoid behavioral divergence.
 - Mount the static site's plan-order modal directly under body so section stacking contexts cannot place navigation above its controls.
 - Site chat (public/chat-widget.js) talks only to /api/public/chat with a per-session secret token; staff read/reply via RLS-protected chat_sessions/chat_messages with realtime, so visitors never touch tables directly.
+- Partners (contractors) live in public.partners + public.partner_clients; self-signup at /partner sets signup_as=partner metadata and an auth.users trigger creates a 'laukiama' partner + partner role, so only staff-approved ('aktyvus') partners can manage clients via RLS (my_active_partner_id).
+- Server-sent emails link to https://sgo.lt, never the request origin, so links never point at preview/localhost hosts.

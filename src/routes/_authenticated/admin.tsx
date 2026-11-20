@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog, Menu, MessagesSquare } from "lucide-react";
+import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog, Menu, MessagesSquare, Handshake } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canAccess, ROLE_LABELS, type Section } from "@/lib/admin-roles";
 import { useMyRoles } from "@/lib/use-my-roles";
@@ -58,6 +58,15 @@ function AdminLayout() {
       return count ?? 0;
     },
   });
+  const pendingPartners = useQuery({
+    queryKey: ["partners-pending-count"],
+    enabled: canAccess(roles, "partners"),
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { count } = await supabase.from("partners").select("id", { count: "exact", head: true }).eq("status", "laukiama");
+      return count ?? 0;
+    },
+  });
   useChatAlerts(canAccess(roles, "chat"), () => {
     qc.invalidateQueries({ queryKey: ["chat-waiting-count"] });
     qc.invalidateQueries({ queryKey: ["chat-sessions"] });
@@ -80,6 +89,10 @@ function AdminLayout() {
         <button className="text-sm text-primary underline" onClick={() => me.refetch()}>Bandyti dar kartą</button>
       </main>
     );
+  }
+  if (roles.length > 0 && roles.every((r) => r === "partner")) {
+    if (typeof window !== "undefined") window.location.replace("/partner/portalas");
+    return <main className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Nukreipiama į partnerio aplinką…</main>;
   }
   if (roles.length === 0) {
     return (
@@ -106,8 +119,9 @@ function AdminLayout() {
               {show("analytics") ? <NavItem to="/admin/analitika" icon={<BarChart3 className="h-4 w-4" />}>Puslapio analitika</NavItem> : null}
             </NavGroup>
           ) : null}
-          {show("pricing") || show("articles") ? (
+          {show("pricing") || show("articles") || show("partners") ? (
             <NavGroup label="Valdymas">
+              {show("partners") ? <NavItem to="/admin/partneriai" icon={<Handshake className="h-4 w-4" />} badge={pendingPartners.data}>Partneriai (rangovai)</NavItem> : null}
               {show("pricing") ? <NavItem to="/admin/kainodara" icon={<Tag className="h-4 w-4" />}>Planų kainodara</NavItem> : null}
               {show("articles") ? <NavItem to="/admin/straipsniai" icon={<FilePenLine className="h-4 w-4" />}>Straipsniai</NavItem> : null}
             </NavGroup>

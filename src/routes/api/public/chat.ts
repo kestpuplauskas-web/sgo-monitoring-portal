@@ -58,7 +58,7 @@ export const Route = createFileRoute("/api/public/chat")({
         if (!p.success) return Response.json({ error: "bad" }, { status: 400 });
         const d = p.data;
         const a = await db();
-        const origin = new URL(request.url).origin;
+        const origin = "https://sgo.lt";
 
         if (d.action === "start") {
           const token = crypto.randomUUID() + crypto.randomUUID();

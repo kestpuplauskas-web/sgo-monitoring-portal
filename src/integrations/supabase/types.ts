@@ -235,6 +235,108 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_clients: {
+        Row: {
+          city: string
+          created_at: string
+          email: string
+          id: string
+          inverter: string
+          name: string
+          notes: string
+          partner_id: string
+          phone: string
+          plan_id: string | null
+          plan_name: string
+          power: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          email?: string
+          id?: string
+          inverter?: string
+          name: string
+          notes?: string
+          partner_id: string
+          phone?: string
+          plan_id?: string | null
+          plan_name?: string
+          power?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          email?: string
+          id?: string
+          inverter?: string
+          name?: string
+          notes?: string
+          partner_id?: string
+          phone?: string
+          plan_id?: string | null
+          plan_name?: string
+          power?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_clients_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_clients_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          city: string
+          company: string
+          company_code: string
+          contact_name: string
+          created_at: string
+          email: string
+          id: string
+          notes: string
+          phone: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          city?: string
+          company?: string
+          company_code?: string
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notes?: string
+          phone?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          city?: string
+          company?: string
+          company_code?: string
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notes?: string
+          phone?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       plan_orders: {
         Row: {
           admin_notes: string
@@ -402,9 +504,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      my_active_partner_id: { Args: never; Returns: string }
     }
     Enums: {
-      app_role: "admin" | "manager" | "editor"
+      app_role: "admin" | "manager" | "editor" | "partner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -532,7 +635,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "manager", "editor"],
+      app_role: ["admin", "manager", "editor", "partner"],
     },
   },
 } as const
