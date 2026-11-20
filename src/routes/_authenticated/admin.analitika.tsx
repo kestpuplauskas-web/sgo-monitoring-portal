@@ -28,6 +28,17 @@ const PAGE_NAMES: Record<string, string> = {
   "/straipsniai": "Straipsniai",
 };
 
+// Vidinis (peržiūros / kūrimo) srautas – nerodome analitikoje
+function isInternalTraffic(ref: string) {
+  if (!ref) return false;
+  try {
+    const h = new URL(ref).hostname;
+    return h.endsWith(".lovable.dev") || h.endsWith(".lovable.app") || h.endsWith(".lovableproject.com") || h === "localhost";
+  } catch {
+    return false;
+  }
+}
+
 function niceSource(ref: string) {
   if (!ref) return "Tiesioginis / nežinomas";
   try {
@@ -72,7 +83,7 @@ function AnalyticsPage() {
   });
 
   const s = useMemo(() => {
-    const rows = data.data?.rows ?? [];
+    const rows = (data.data?.rows ?? []).filter((r) => !isInternalTraffic(r.referrer));
     const visitors = new Set(rows.map((r) => r.visitor_id || r.created_at)).size;
     const byDay = new Map<string, number>();
     for (let i = 0; i < days; i++) {
