@@ -1,6 +1,6 @@
 import { generateResponse } from "@lovable.dev/ai-gateway";
 
-export const CHAT_NOTIFY_EMAIL = "mindaugas@sviesosenergija.lt";
+export const CHAT_NOTIFY_EMAIL = "info@sgo.lt";
 
 const HUMAN_RE = /(specialist|žmog|zmog|operator|vadybinink|gyvai|tikru žmog|konsultant|paskambin|susisiekit)/i;
 export const wantsHuman = (t: string) => HUMAN_RE.test(t);
