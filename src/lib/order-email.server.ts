@@ -38,3 +38,20 @@ export async function sendOrderConfirmation(o: {
   });
   if (!res.ok) console.error(`Order email failed [${res.status}]: ${await res.text()}`);
 }
+
+export async function sendPartnerAccessEmail(o: { to: string; company: string; link: string }) {
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  const resendKey = process.env["RESEND_API_KEY"];
+  if (!lovableKey || !resendKey) throw new Error("Laiškų siuntimas nesukonfigūruotas");
+  const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1a1a1a">
+<h2 style="color:#0b1f17">Kvietimas į SGO partnerių aplinką</h2>
+<p>${esc(o.company)} pakviesta tapti SGO partneriu (rangovu). Jūsų paskyra jau aktyvi.</p>
+<p><a href="${esc(o.link)}" style="display:inline-block;background:#0b1f17;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Prisijungti prie partnerio aplinkos</a></p>
+<p style="color:#666;font-size:13px">Nuoroda galioja ribotą laiką. Jei nebegalioja, prisijunkite adresu https://sgo.lt/partner.<br>SGO · info@sgo.lt · sgo.lt</p></div>`;
+  const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${lovableKey}`, "X-Connection-Api-Key": resendKey },
+    body: JSON.stringify({ from: "SGO <info@sgo.lt>", to: [o.to], reply_to: "info@sgo.lt", subject: "Kvietimas į SGO partnerių aplinką", html }),
+  });
+  if (!res.ok) throw new Error(`Nepavyko išsiųsti laiško (${res.status})`);
+}

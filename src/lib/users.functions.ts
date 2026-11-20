@@ -114,6 +114,15 @@ export const invitePartner = createServerFn({ method: "POST" })
       const { data: list } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 });
       userId = list?.users.find((u) => u.email?.toLowerCase() === email)?.id;
       if (!userId) throw new Error("Nepavyko išsiųsti kvietimo. Patikrinkite el. pašto adresą.");
+      // Account already exists: Auth won't send an invite, so send our own sign-in link.
+      const { data: link, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
+        type: "magiclink",
+        email,
+        options: { redirectTo: "https://sgo.lt/partner" },
+      });
+      if (linkErr || !link?.properties?.action_link) throw new Error("Nepavyko sukurti prisijungimo nuorodos");
+      const { sendPartnerAccessEmail } = await import("@/lib/order-email.server");
+      await sendPartnerAccessEmail({ to: email, company: data.company, link: link.properties.action_link });
     }
     const { data: existing } = await supabaseAdmin.from("partners").select("id").eq("user_id", userId!).maybeSingle();
     if (existing) await supabaseAdmin.from("partners").update({ status: "aktyvus", company: data.company }).eq("id", existing.id);
