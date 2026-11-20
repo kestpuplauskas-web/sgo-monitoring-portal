@@ -87,7 +87,16 @@ export const Route = createFileRoute("/api/public/chat")({
           const r = await agentReply(hist ?? [], await plansText());
           await a.from("chat_messages").insert({ session_id: s.id, role: "agent", content: r.text });
           await a.from("chat_sessions").update({ last_message_at: new Date().toISOString() }).eq("id", s.id);
-          if (r.handoff) await escalate(s, d.text, origin);
+          if (r.lead) {
+            const L = r.lead;
+            const email = (L.email && /.+@.+\..+/.test(L.email) ? L.email : s.visitor_email || "").toLowerCase();
+            await a.from("inquiries").insert({
+              name: L.name || s.visitor_name || "Pokalbio klientas", email, phone: L.phone, city: L.city, service: L.service,
+              message: `${L.problem || "Remonto / apžiūros užklausa"}\n\n(Gauta per SGO Asistento pokalbį)`, page: "chat",
+            });
+            await a.from("chat_sessions").update({ status: "closed", visitor_name: L.name || s.visitor_name, visitor_email: email }).eq("id", s.id);
+            await a.from("chat_messages").insert({ session_id: s.id, role: "system", content: "Užklausa perduota SGO specialistui." });
+          } else if (r.handoff) await escalate(s, d.text, origin);
         } catch (e) {
           console.error("Agent failed", e);
           await escalate(s, d.text, origin);

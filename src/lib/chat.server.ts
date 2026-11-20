@@ -6,14 +6,22 @@ const HUMAN_RE = /(specialist|žmog|zmog|operator|vadybinink|gyvai|tikru žmog|k
 export const wantsHuman = (t: string) => HUMAN_RE.test(t);
 
 type Msg = { role: string; content: string };
+export type Lead = { name: string; phone: string; email: string; city: string; service: string; problem: string };
 
-export async function agentReply(history: Msg[], plansText: string): Promise<{ text: string; handoff: boolean }> {
+export async function agentReply(history: Msg[], plansText: string): Promise<{ text: string; handoff: boolean; lead: Lead | null }> {
   const instructions = `Tu esi „SGO Asistentas“ — draugiškas SGO (sgo.lt) saulės elektrinių stebėsenos, diagnostikos ir serviso konsultantas. Visada atsakyk lietuviškai (nebent klientas rašo kita kalba), trumpai — 1–4 sakiniai, aiškiai, be žargono. Rašyk paprastu tekstu — jokio markdown (be **, #, [ ](…)); nuorodas rašyk tiesiog kaip sgo.lt/#planai.
 Tikslas: padėti klientui suprasti, kuris planas jam tinka, ir paskatinti užsisakyti planą svetainės skiltyje „Planai“ (sgo.lt/#planai) arba palikti kontaktus.
 SGO planai (aktualios kainos):
 ${plansText}
 Papildomos paslaugos: diagnostika vietoje 79 €, servisas 45 €/val., išvykimas 0,50 €/km. Telefonas +370 606 06222, el. paštas info@sgo.lt.
-Nežinodamas fakto neišsigalvok — pasiūlyk sujungti su specialistu. Jei klientas nori kalbėti su žmogumi, turi skubų gedimą, skundą ar klausimą, į kurį negali atsakyti, atsakymo pabaigoje parašyk žymę [SPECIALISTAS].`;
+SVARBU — remontas, apžiūra, diagnostika, gedimas ar įrengimo klausimas: NIEKADA nesiųsk kliento skambinti ar rašyti el. paštu pačiam. Vietoj to pats surink informaciją pokalbyje, po vieną klausimą per žinutę:
+1) kas nutiko elektrinei (simptomas, inverterio klaida, nuo kada);
+2) elektrinės vieta (miestas / rajonas);
+3) kliento vardas;
+4) telefono numeris (el. paštas — neprivalomas).
+Tada trumpai pakartok surinktą informaciją ir paklausk: „Ar norite, kad SGO specialistas su jumis susisiektų dėl remonto ar apžiūros?“ Kainas (diagnostika 79 €, servisas 45 €/val., išvykimas 0,50 €/km) paminėk tik jei klausia.
+Kai klientas sutinka (pvz. „taip“, „gerai, lauksiu skambučio“), mandagiai užbaik pokalbį: padėkok, pasakyk, kad specialistas susisieks per 1 darbo dieną, ir palinkėk geros dienos. Tos žinutės pabaigoje parašyk žymę [UZKLAUSA]{"name":"…","phone":"…","email":"…","city":"…","service":"Remontas / apžiūra","problem":"…"} — vienoje eilutėje, galiojantis JSON, trūkstamus laukus palik tuščius "". Žymę rašyk tik vieną kartą ir tik klientui patvirtinus.
+Nežinodamas fakto neišsigalvok. Jei klientas aiškiai prašo gyvo žmogaus dabar arba pikta skundžiasi, atsakymo pabaigoje parašyk žymę [SPECIALISTAS].`;
   const res = await generateResponse({
     model: "openai/gpt-6-astra",
     instructions,
@@ -27,8 +35,18 @@ Nežinodamas fakto neišsigalvok — pasiūlyk sujungti su specialistu. Jei klie
   if (typeof r.output_text === "string") text = r.output_text;
   else for (const o of r.output ?? []) if (o.type === "message") for (const c of o.content ?? []) if (c.type === "output_text" && c.text) text += c.text;
   const handoff = text.includes("[SPECIALISTAS]");
-  text = text.replace("[SPECIALISTAS]", "").trim() || "Atsiprašau, šiuo metu negaliu atsakyti. Sujungsiu jus su SGO specialistu.";
-  return { text, handoff };
+  let lead: Lead | null = null;
+  const m = text.match(/\[UZKLAUSA\]\s*(\{[\s\S]*?\})/);
+  if (m) {
+    try {
+      const j = JSON.parse(m[1]!) as Partial<Lead>;
+      const str = (v: unknown, n: number) => (typeof v === "string" ? v.trim().slice(0, n) : "");
+      lead = { name: str(j.name, 100), phone: str(j.phone, 30), email: str(j.email, 255), city: str(j.city, 150), service: str(j.service, 100) || "Remontas / apžiūra", problem: str(j.problem, 3000) };
+    } catch { /* ignore malformed */ }
+    text = text.replace(m[0], "");
+  }
+  text = text.replace(/\[UZKLAUSA\]/g, "").replace("[SPECIALISTAS]", "").trim() || "Atsiprašau, šiuo metu negaliu atsakyti. Sujungsiu jus su SGO specialistu.";
+  return { text, handoff, lead };
 }
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
