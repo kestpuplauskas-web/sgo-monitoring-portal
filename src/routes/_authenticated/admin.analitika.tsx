@@ -33,7 +33,12 @@ function isInternalTraffic(ref: string) {
   if (!ref) return false;
   try {
     const h = new URL(ref).hostname;
-    return h.endsWith(".lovable.dev") || h.endsWith(".lovable.app") || h.endsWith(".lovableproject.com") || h === "localhost";
+    return (
+      h === "lovable.dev" || h.endsWith(".lovable.dev") ||
+      h === "lovable.app" || h.endsWith(".lovable.app") ||
+      h === "lovableproject.com" || h.endsWith(".lovableproject.com") ||
+      h === "localhost"
+    );
   } catch {
     return false;
   }
