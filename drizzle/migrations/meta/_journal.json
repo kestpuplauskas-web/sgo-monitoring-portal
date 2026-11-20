@@ -22,6 +22,20 @@
       "when": 1794478555859,
       "tag": "0002_add_installer_to_plan_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795162238008,
+      "tag": "0003_create_chat",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795162360088,
+      "tag": "0004_chat_replica_full",
+      "breakpoints": true
     }
   ]
 }

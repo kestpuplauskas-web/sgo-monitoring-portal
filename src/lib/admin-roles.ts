@@ -12,10 +12,11 @@ export const ROLE_HINTS: Record<AppRole, string> = {
   editor: "Tik straipsniai.",
 };
 
-export type Section = "orders" | "inquiries" | "clients" | "analytics" | "pricing" | "articles" | "users";
+export type Section = "orders" | "chat" | "inquiries" | "clients" | "analytics" | "pricing" | "articles" | "users";
 
 const ACCESS: Record<Section, AppRole[]> = {
   orders: ["admin", "manager"],
+  chat: ["admin", "manager"],
   inquiries: ["admin", "manager"],
   clients: ["admin", "manager"],
   analytics: ["admin", "manager"],

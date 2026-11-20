@@ -1,7 +1,8 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
-import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog, Menu } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
+import { BarChart3, ExternalLink, Mail, FilePenLine, Inbox, LogOut, Tag, Users, UserCog, Menu, MessagesSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canAccess, ROLE_LABELS, type Section } from "@/lib/admin-roles";
 import { useMyRoles } from "@/lib/use-my-roles";
@@ -48,6 +49,20 @@ function AdminLayout() {
     },
   });
 
+  const waitingChats = useQuery({
+    queryKey: ["chat-waiting-count"],
+    enabled: canAccess(roles, "chat"),
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { count } = await supabase.from("chat_sessions").select("id", { count: "exact", head: true }).eq("status", "waiting");
+      return count ?? 0;
+    },
+  });
+  useChatAlerts(canAccess(roles, "chat"), () => {
+    qc.invalidateQueries({ queryKey: ["chat-waiting-count"] });
+    qc.invalidateQueries({ queryKey: ["chat-sessions"] });
+  });
+
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
@@ -85,6 +100,7 @@ function AdminLayout() {
               {show("orders") ? (
                 <NavItem to="/admin/uzsakymai" icon={<Inbox className="h-4 w-4" />} badge={newOrders.data}>Planų užsakymai</NavItem>
               ) : null}
+              {show("chat") ? <NavItem to="/admin/chat" icon={<MessagesSquare className="h-4 w-4" />} badge={waitingChats.data}>Chat komunikacija</NavItem> : null}
               {show("inquiries") ? <NavItem to="/admin/uzklausos" icon={<Mail className="h-4 w-4" />} badge={newInquiries.data}>Klientų užklausos</NavItem> : null}
               {show("clients") ? <NavItem to="/admin/klientai" icon={<Users className="h-4 w-4" />}>Klientų registras</NavItem> : null}
               {show("analytics") ? <NavItem to="/admin/analitika" icon={<BarChart3 className="h-4 w-4" />}>Puslapio analitika</NavItem> : null}
@@ -176,4 +192,45 @@ function NavItem({ to, icon, badge, children }: { to: string; icon: ReactNode; b
       ) : null}
     </Link>
   );
+}
+
+function playDing() {
+  try {
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
+    [880, 1320].forEach((f, i) => {
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.frequency.value = f; o.connect(g); g.connect(ctx.destination);
+      const t = ctx.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      o.start(t); o.stop(t + 0.4);
+    });
+  } catch { /* sound unavailable */ }
+}
+
+function useChatAlerts(enabled: boolean, onChange: () => void) {
+  const cb = useRef(onChange);
+  cb.current = onChange;
+  useEffect(() => {
+    if (!enabled) return;
+    if ("Notification" in window && Notification.permission === "default") Notification.requestPermission().catch(() => {});
+    const ch = supabase
+      .channel(`chat-alerts-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "chat_sessions" }, (p) => {
+        cb.current();
+        const n = p.new as { id: string; status: string; visitor_name: string; last_message: string };
+        const o = p.old as { status?: string };
+        if (n.status === "waiting" && o.status !== "waiting") {
+          playDing();
+          toast.warning("Klientas prašo specialisto pokalbyje", { action: { label: "Atidaryti", onClick: () => { window.location.href = `/admin/chat?s=${n.id}`; } } });
+          if ("Notification" in window && Notification.permission === "granted") {
+            const notif = new Notification("Klientas laukia pokalbyje", { body: n.last_message.slice(0, 120), icon: "/favicon.png" });
+            notif.onclick = () => { window.focus(); window.location.href = `/admin/chat?s=${n.id}`; };
+          }
+        }
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_sessions" }, () => cb.current())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [enabled]);
 }

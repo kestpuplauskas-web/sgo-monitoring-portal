@@ -36,3 +36,4 @@ use the editor.
 - Classify password-update errors in a browser-safe helper so weak-password rejections never masquerade as expired invitations; preserve hosted password security checks.
 - Admin navigation uses the same role-filtered links in the desktop sidebar and mobile drawer; mobile order/client cards share the existing queries and dialogs to avoid behavioral divergence.
 - Mount the static site's plan-order modal directly under body so section stacking contexts cannot place navigation above its controls.
+- Site chat (public/chat-widget.js) talks only to /api/public/chat with a per-session secret token; staff read/reply via RLS-protected chat_sessions/chat_messages with realtime, so visitors never touch tables directly.

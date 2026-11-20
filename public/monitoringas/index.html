@@ -498,27 +498,7 @@
 <script src="/smooth.js?v=fdfa6754" defer></script>
 <script src="/script.js?v=afcd0568" defer></script>
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-  var started=false;
-  function loadTawk(){
-    if(started) return; started=true;
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6a9fce3808f5a2345548d5c4/1k203r3s5';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  }
-  /* after the page has finished loading and the browser is idle, or at the first sign of interaction */
-  function later(){ (window.requestIdleCallback ? requestIdleCallback(loadTawk,{timeout:4000}) : setTimeout(loadTawk,2500)); }
-  if(document.readyState==='complete'){ setTimeout(later,1500); } else { window.addEventListener('load',function(){ setTimeout(later,1500); }); }
-  ['pointerdown','keydown','touchstart','scroll'].forEach(function(ev){ window.addEventListener(ev,loadTawk,{once:true,passive:true}); });
-})();
-</script>
-<!--End of Tawk.to Script-->
+<script src="/chat-widget.js" defer></script>
 <script>(function(){try{var k='sgo_vid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v)}var b=JSON.stringify({path:location.pathname,referrer:document.referrer,vid:v});if(navigator.sendBeacon)navigator.sendBeacon('/api/public/track',b);else fetch('/api/public/track',{method:'POST',body:b,keepalive:true})}catch(e){}})();</script>
 </body>
 </html>

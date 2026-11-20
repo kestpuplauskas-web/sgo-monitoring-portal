@@ -21,12 +21,14 @@ import { Route as StraipsniaiIndexRouteImport } from './routes/straipsniai.index
 import { Route as StraipsniaiSlugRouteImport } from './routes/straipsniai.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminAnalitikaRouteImport } from './routes/_authenticated/admin.analitika'
+import { Route as AuthenticatedAdminChatRouteImport } from './routes/_authenticated/admin.chat'
 import { Route as AuthenticatedAdminKainodaraRouteImport } from './routes/_authenticated/admin.kainodara'
 import { Route as AuthenticatedAdminKlientaiRouteImport } from './routes/_authenticated/admin.klientai'
 import { Route as AuthenticatedAdminUzklausosRouteImport } from './routes/_authenticated/admin.uzklausos'
 import { Route as AuthenticatedAdminUzsakymaiRouteImport } from './routes/_authenticated/admin.uzsakymai'
 import { Route as AuthenticatedAdminVartotojaiRouteImport } from './routes/_authenticated/admin.vartotojai'
 import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
+import { Route as ApiPublicChatRouteImport } from './routes/api/public/chat'
 import { Route as ApiPublicInquiriesRouteImport } from './routes/api/public/inquiries'
 import { Route as ApiPublicOrdersRouteImport } from './routes/api/public/orders'
 import { Route as ApiPublicPlansRouteImport } from './routes/api/public/plans'
@@ -94,6 +96,11 @@ const AuthenticatedAdminAnalitikaRoute =
     path: '/analitika',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminChatRoute = AuthenticatedAdminChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminKainodaraRoute =
   AuthenticatedAdminKainodaraRouteImport.update({
     id: '/kainodara',
@@ -127,6 +134,11 @@ const AuthenticatedAdminVartotojaiRoute =
 const ApiPublicArticlesRoute = ApiPublicArticlesRouteImport.update({
   id: '/api/public/articles',
   path: '/api/public/articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicChatRoute = ApiPublicChatRouteImport.update({
+  id: '/api/public/chat',
+  path: '/api/public/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicInquiriesRoute = ApiPublicInquiriesRouteImport.update({
@@ -173,12 +185,14 @@ export interface FileRoutesByFullPath {
   '/straipsniai/$slug': typeof StraipsniaiSlugRoute
   '/straipsniai/': typeof StraipsniaiIndexRoute
   '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/admin/chat': typeof AuthenticatedAdminChatRoute
   '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzklausos': typeof AuthenticatedAdminUzklausosRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/inquiries': typeof ApiPublicInquiriesRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
@@ -197,12 +211,14 @@ export interface FileRoutesByTo {
   '/straipsniai/$slug': typeof StraipsniaiSlugRoute
   '/straipsniai': typeof StraipsniaiIndexRoute
   '/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/admin/chat': typeof AuthenticatedAdminChatRoute
   '/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/admin/uzklausos': typeof AuthenticatedAdminUzklausosRoute
   '/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/inquiries': typeof ApiPublicInquiriesRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
@@ -224,12 +240,14 @@ export interface FileRoutesById {
   '/straipsniai/$slug': typeof StraipsniaiSlugRoute
   '/straipsniai/': typeof StraipsniaiIndexRoute
   '/_authenticated/admin/analitika': typeof AuthenticatedAdminAnalitikaRoute
+  '/_authenticated/admin/chat': typeof AuthenticatedAdminChatRoute
   '/_authenticated/admin/kainodara': typeof AuthenticatedAdminKainodaraRoute
   '/_authenticated/admin/klientai': typeof AuthenticatedAdminKlientaiRoute
   '/_authenticated/admin/uzklausos': typeof AuthenticatedAdminUzklausosRoute
   '/_authenticated/admin/uzsakymai': typeof AuthenticatedAdminUzsakymaiRoute
   '/_authenticated/admin/vartotojai': typeof AuthenticatedAdminVartotojaiRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/inquiries': typeof ApiPublicInquiriesRoute
   '/api/public/orders': typeof ApiPublicOrdersRoute
   '/api/public/plans': typeof ApiPublicPlansRoute
@@ -251,12 +269,14 @@ export interface FileRouteTypes {
     | '/straipsniai/$slug'
     | '/straipsniai/'
     | '/admin/analitika'
+    | '/admin/chat'
     | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzklausos'
     | '/admin/uzsakymai'
     | '/admin/vartotojai'
     | '/api/public/articles'
+    | '/api/public/chat'
     | '/api/public/inquiries'
     | '/api/public/orders'
     | '/api/public/plans'
@@ -275,12 +295,14 @@ export interface FileRouteTypes {
     | '/straipsniai/$slug'
     | '/straipsniai'
     | '/admin/analitika'
+    | '/admin/chat'
     | '/admin/kainodara'
     | '/admin/klientai'
     | '/admin/uzklausos'
     | '/admin/uzsakymai'
     | '/admin/vartotojai'
     | '/api/public/articles'
+    | '/api/public/chat'
     | '/api/public/inquiries'
     | '/api/public/orders'
     | '/api/public/plans'
@@ -301,12 +323,14 @@ export interface FileRouteTypes {
     | '/straipsniai/$slug'
     | '/straipsniai/'
     | '/_authenticated/admin/analitika'
+    | '/_authenticated/admin/chat'
     | '/_authenticated/admin/kainodara'
     | '/_authenticated/admin/klientai'
     | '/_authenticated/admin/uzklausos'
     | '/_authenticated/admin/uzsakymai'
     | '/_authenticated/admin/vartotojai'
     | '/api/public/articles'
+    | '/api/public/chat'
     | '/api/public/inquiries'
     | '/api/public/orders'
     | '/api/public/plans'
@@ -327,6 +351,7 @@ export interface RootRouteChildren {
   StraipsniaiSlugRoute: typeof StraipsniaiSlugRoute
   StraipsniaiIndexRoute: typeof StraipsniaiIndexRoute
   ApiPublicArticlesRoute: typeof ApiPublicArticlesRoute
+  ApiPublicChatRoute: typeof ApiPublicChatRoute
   ApiPublicInquiriesRoute: typeof ApiPublicInquiriesRoute
   ApiPublicOrdersRoute: typeof ApiPublicOrdersRoute
   ApiPublicPlansRoute: typeof ApiPublicPlansRoute
@@ -419,6 +444,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAnalitikaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/chat': {
+      id: '/_authenticated/admin/chat'
+      path: '/chat'
+      fullPath: '/admin/chat'
+      preLoaderRoute: typeof AuthenticatedAdminChatRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/kainodara': {
       id: '/_authenticated/admin/kainodara'
       path: '/kainodara'
@@ -459,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/articles'
       fullPath: '/api/public/articles'
       preLoaderRoute: typeof ApiPublicArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/chat': {
+      id: '/api/public/chat'
+      path: '/api/public/chat'
+      fullPath: '/api/public/chat'
+      preLoaderRoute: typeof ApiPublicChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/inquiries': {
@@ -508,6 +547,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAnalitikaRoute: typeof AuthenticatedAdminAnalitikaRoute
+  AuthenticatedAdminChatRoute: typeof AuthenticatedAdminChatRoute
   AuthenticatedAdminKainodaraRoute: typeof AuthenticatedAdminKainodaraRoute
   AuthenticatedAdminKlientaiRoute: typeof AuthenticatedAdminKlientaiRoute
   AuthenticatedAdminUzklausosRoute: typeof AuthenticatedAdminUzklausosRoute
@@ -520,6 +560,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAnalitikaRoute: AuthenticatedAdminAnalitikaRoute,
+  AuthenticatedAdminChatRoute: AuthenticatedAdminChatRoute,
   AuthenticatedAdminKainodaraRoute: AuthenticatedAdminKainodaraRoute,
   AuthenticatedAdminKlientaiRoute: AuthenticatedAdminKlientaiRoute,
   AuthenticatedAdminUzklausosRoute: AuthenticatedAdminUzklausosRoute,
@@ -556,6 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   StraipsniaiSlugRoute: StraipsniaiSlugRoute,
   StraipsniaiIndexRoute: StraipsniaiIndexRoute,
   ApiPublicArticlesRoute: ApiPublicArticlesRoute,
+  ApiPublicChatRoute: ApiPublicChatRoute,
   ApiPublicInquiriesRoute: ApiPublicInquiriesRoute,
   ApiPublicOrdersRoute: ApiPublicOrdersRoute,
   ApiPublicPlansRoute: ApiPublicPlansRoute,

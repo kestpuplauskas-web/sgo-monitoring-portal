@@ -1876,7 +1876,7 @@
       <section class="legal-section">
         <h2 id="privatumo-duomenys">2. Kokius duomenis renkame</h2>
         <p>Kontaktų forma: vardą, el. pašto adresą, pasirinktą sistemos tipą ir žinutės turinį — juos pateikiate savanoriškai, siųsdami užklausą.</p>
-        <p>Pokalbių langelis (Tawk.to): pokalbio žinutes ir techninę informaciją (pvz. IP adresą, naršyklės tipą), kurią tvarko paslaugos teikėjas Tawk.to Inc.</p>
+        <p>Pokalbių langelis (SGO Asistentas): pokalbio žinutes ir, jei pateikiate, vardą bei el. paštą. Į klausimus pirmiausia atsako dirbtinio intelekto asistentas, o paprašius — SGO specialistas.</p>
         <p>Svetainės lankomumas (Google Analytics): tik jei sutinkate su statistikos slapukais, gauname apibendrintus duomenis apie apsilankymus: peržiūrėtus puslapius, naudojamą įrenginį ir naršyklę, apytikslę vietovę (be tikslaus adreso), kaip pasiekėte svetainę ir ar išsiuntėte užklausą. IP adresai nėra saugomi pilnai.</p>
         <p>Reklamos matavimas (Google Ads, Meta): tik jei sutinkate su reklamos slapukais, šie paslaugų teikėjai gauna informaciją, kad apsilankėte svetainėje ar išsiuntėte užklausą, kad galėtume įvertinti, ar reklama veikia.</p>
         <p>Šriftai (Google Fonts): svetainei įkeliant šriftus, naršyklė automatiškai siunčia užklausą į Google serverius, kurie gali gauti jūsų IP adresą.</p>
@@ -1896,7 +1896,7 @@
 
       <section class="legal-section">
         <h2 id="privatumo-gavejai">5. Duomenų gavėjai</h2>
-        <p>Duomenimis galime dalintis su paslaugų teikėjais, kurie padeda administruoti svetainę: Tawk.to Inc. (pokalbių langelis), Google (šriftai, Google Analytics ir Google Ads, tik su jūsų sutikimu), Meta Platforms (reklamos matavimas, tik su jūsų sutikimu) ir svetainės talpinimo paslaugos teikėju. Duomenų neparduodame ir neperduodame rinkodaros tikslais trečiosioms šalims. Kai kurie šie teikėjai gali tvarkyti duomenis už Europos ekonominės erdvės ribų, taikant Europos Komisijos patvirtintas apsaugos priemones.</p>
+        <p>Duomenimis galime dalintis su paslaugų teikėjais, kurie padeda administruoti svetainę: Google (šriftai, Google Analytics ir Google Ads, tik su jūsų sutikimu), Meta Platforms (reklamos matavimas, tik su jūsų sutikimu) ir svetainės talpinimo paslaugos teikėju. Duomenų neparduodame ir neperduodame rinkodaros tikslais trečiosioms šalims. Kai kurie šie teikėjai gali tvarkyti duomenis už Europos ekonominės erdvės ribų, taikant Europos Komisijos patvirtintas apsaugos priemones.</p>
       </section>
 
       <section class="legal-section">
@@ -1910,7 +1910,7 @@
         <p><strong>Statistika</strong> (Google Analytics): padeda suprasti, kiek žmonių lankosi ir kurie puslapiai populiariausi. Slapukai: _ga ir _ga_* (galioja iki 2 metų).</p>
         <p><strong>Reklama</strong> (Google Ads, Meta, t. y. Facebook ir Instagram): padeda įvertinti, ar reklama veikia. Slapukai: _gcl_* (iki 90 dienų) ir _fbp (iki 90 dienų). Jie naudojami tik kai rodome reklamą.</p>
         <p>Paspaudus „Atmesti“ šie slapukai nenaudojami. Savo pasirinkimą galite bet kada pakeisti paspaudę „Slapukų nustatymai“ svetainės apačioje arba ištrynę slapukus naršyklės nustatymuose.</p>
-        <p>Pokalbių langelis (Tawk.to) gali statyti savo slapukus pokalbio sesijai palaikyti — jų valdymą galite peržiūrėti naršyklės nustatymuose.</p>
+        <p>Pokalbių langelis (SGO Asistentas) naršyklės atmintyje saugo tik pokalbio identifikatorių, kad pokalbis nepradingtų pereinant tarp puslapių.</p>
       </section>
     </main>
   </div>
@@ -2233,27 +2233,7 @@
 
 
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-  var started=false;
-  function loadTawk(){
-    if(started) return; started=true;
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6a9fce3808f5a2345548d5c4/1k203r3s5';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  }
-  /* after the page has finished loading and the browser is idle, or at the first sign of interaction */
-  function later(){ (window.requestIdleCallback ? requestIdleCallback(loadTawk,{timeout:4000}) : setTimeout(loadTawk,2500)); }
-  if(document.readyState==='complete'){ setTimeout(later,1500); } else { window.addEventListener('load',function(){ setTimeout(later,1500); }); }
-  ['pointerdown','keydown','touchstart','scroll'].forEach(function(ev){ window.addEventListener(ev,loadTawk,{once:true,passive:true}); });
-})();
-</script>
-<!--End of Tawk.to Script-->
+<script src="/chat-widget.js" defer></script>
 <script>(function(){try{var k='sgo_vid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v)}var b=JSON.stringify({path:location.pathname,referrer:document.referrer,vid:v});if(navigator.sendBeacon)navigator.sendBeacon('/api/public/track',b);else fetch('/api/public/track',{method:'POST',body:b,keepalive:true})}catch(e){}})();</script>
 </body>
 </html>
