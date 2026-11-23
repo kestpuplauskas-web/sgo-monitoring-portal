@@ -237,11 +237,14 @@ export type Database = {
       }
       partner_clients: {
         Row: {
+          address: string
           city: string
           created_at: string
           email: string
           id: string
+          installed_on: string | null
           inverter: string
+          logger_id: string
           name: string
           notes: string
           partner_id: string
@@ -249,13 +252,19 @@ export type Database = {
           plan_id: string | null
           plan_name: string
           power: string
+          serial_no: string
+          status: string
+          warranty_until: string | null
         }
         Insert: {
+          address?: string
           city?: string
           created_at?: string
           email?: string
           id?: string
+          installed_on?: string | null
           inverter?: string
+          logger_id?: string
           name: string
           notes?: string
           partner_id: string
@@ -263,13 +272,19 @@ export type Database = {
           plan_id?: string | null
           plan_name?: string
           power?: string
+          serial_no?: string
+          status?: string
+          warranty_until?: string | null
         }
         Update: {
+          address?: string
           city?: string
           created_at?: string
           email?: string
           id?: string
+          installed_on?: string | null
           inverter?: string
+          logger_id?: string
           name?: string
           notes?: string
           partner_id?: string
@@ -277,6 +292,9 @@ export type Database = {
           plan_id?: string | null
           plan_name?: string
           power?: string
+          serial_no?: string
+          status?: string
+          warranty_until?: string | null
         }
         Relationships: [
           {
@@ -291,6 +309,51 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_service_requests: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          description: string
+          id: string
+          kind: string
+          partner_id: string
+          status: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          kind?: string
+          partner_id: string
+          status?: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          kind?: string
+          partner_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_service_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "partner_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_service_requests_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
             referencedColumns: ["id"]
           },
         ]

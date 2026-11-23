@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { ChevronDown, Handshake, KeyRound, Loader2 } from "lucide-react";
+import { CLIENT_STATUSES, REQUEST_STATUSES } from "@/lib/partner-status";
 import { supabase } from "@/integrations/supabase/client";
 import { invitePartner, sendPartnerPasswordReminder } from "@/lib/users.functions";
 import { PARTNER_STATUSES, canAccess } from "@/lib/admin-roles";
@@ -66,6 +67,31 @@ function PartnersPage() {
       return data;
     },
   });
+  const reqs = useQuery({
+    queryKey: ["partner-requests-all"],
+    enabled: allowed,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("partner_service_requests").select("*").order("created_at", { ascending: false }).limit(50);
+      if (error) throw error;
+      return data;
+    },
+  });
+  const setReqStatus = useMutation({
+    mutationFn: async (v: { id: string; status: string }) => {
+      const { error } = await supabase.from("partner_service_requests").update({ status: v.status }).eq("id", v.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Užklausos būsena pakeista"); qc.invalidateQueries({ queryKey: ["partner-requests-all"] }); },
+    onError: () => toast.error("Nepavyko pakeisti būsenos"),
+  });
+  const setClientStatus = useMutation({
+    mutationFn: async (v: { id: string; status: string }) => {
+      const { error } = await supabase.from("partner_clients").update({ status: v.status }).eq("id", v.id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Kliento būsena pakeista"); qc.invalidateQueries({ queryKey: ["partner-clients-all"] }); },
+    onError: () => toast.error("Nepavyko pakeisti būsenos"),
+  });
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["partners"] });
     qc.invalidateQueries({ queryKey: ["partners-pending-count"] });
@@ -108,6 +134,26 @@ function PartnersPage() {
             <Stat label="Laukia" value={list.filter((p) => p.status === "laukiama").length} />
             <Stat label="Klientų" value={cl.length} />
           </div>
+          {(reqs.data ?? []).length > 0 ? (
+            <Panel className="p-4">
+              <h2 className="font-display text-base font-bold">Rangovų serviso užklausos</h2>
+              <div className="mt-3 grid gap-2">
+                {reqs.data!.map((r) => (
+                  <div key={r.id} className="grid gap-2 rounded-md bg-muted/40 p-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                    <div className="min-w-0">
+                      <p className="font-semibold">{cl.find((c) => c.id === r.client_id)?.name ?? "Klientas"} · {list.find((p) => p.id === r.partner_id)?.company ?? "Rangovas"}</p>
+                      <p className="break-words text-muted-foreground">{r.description}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString("lt-LT")}</p>
+                    </div>
+                    <Select value={r.status} onValueChange={(v) => setReqStatus.mutate({ id: r.id, status: v })}>
+                      <SelectTrigger className="h-9 w-[140px]" aria-label="Užklausos būsena"><SelectValue /></SelectTrigger>
+                      <SelectContent>{Object.entries(REQUEST_STATUSES).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          ) : null}
           {partners.isLoading ? (
             <div className="grid gap-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-20" />)}</div>
           ) : partners.isError ? (
@@ -153,8 +199,15 @@ function PartnersPage() {
                               <div className="min-w-0">
                                 <p className="font-semibold">{c.name}</p>
                                 <p className="break-words text-muted-foreground">{[c.phone, c.email, c.city, c.power && `${c.power} kW`, c.inverter].filter(Boolean).join(" · ")}</p>
+                                <p className="break-words text-xs text-muted-foreground">{[c.address, c.serial_no && `S/N ${c.serial_no}`, c.logger_id && `Logger ${c.logger_id}`, c.installed_on && `Įrengta ${c.installed_on}`, c.warranty_until && `Garantija iki ${c.warranty_until}`].filter(Boolean).join(" · ")}</p>
                               </div>
-                              <span className="self-center rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">{c.plan_name || "Planas nepasirinktas"}</span>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">{c.plan_name || "Planas nepasirinktas"}</span>
+                                <Select value={c.status} onValueChange={(v) => setClientStatus.mutate({ id: c.id, status: v })}>
+                                  <SelectTrigger className="h-9 w-[180px]" aria-label="Kliento būsena"><SelectValue /></SelectTrigger>
+                                  <SelectContent>{CLIENT_STATUSES.map((st) => <SelectItem key={st.value} value={st.value}>{st.label}</SelectItem>)}</SelectContent>
+                                </Select>
+                              </div>
                             </div>
                           ))}
                         </div>
