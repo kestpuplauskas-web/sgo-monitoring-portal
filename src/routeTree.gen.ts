@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as DiagnostikaRouteImport } from './routes/diagnostika'
 import { Route as MonitoringasRouteImport } from './routes/monitoringas'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ServisasRouteImport } from './routes/servisas'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AdminPrisijungimasRouteImport } from './routes/admin.prisijungimas'
@@ -56,6 +57,11 @@ const DiagnostikaRoute = DiagnostikaRouteImport.update({
 const MonitoringasRoute = MonitoringasRouteImport.update({
   id: '/monitoringas',
   path: '/monitoringas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServisasRoute = ServisasRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/servisas': typeof ServisasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/servisas': typeof ServisasRoute
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
   '/admin/slaptazodis': typeof AdminSlaptazodisRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/diagnostika': typeof DiagnostikaRoute
   '/monitoringas': typeof MonitoringasRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/servisas': typeof ServisasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/prisijungimas': typeof AdminPrisijungimasRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/'
     | '/diagnostika'
     | '/monitoringas'
+    | '/reset-password'
     | '/servisas'
     | '/admin'
     | '/admin/prisijungimas'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/'
     | '/diagnostika'
     | '/monitoringas'
+    | '/reset-password'
     | '/servisas'
     | '/admin/prisijungimas'
     | '/admin/slaptazodis'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/diagnostika'
     | '/monitoringas'
+    | '/reset-password'
     | '/servisas'
     | '/_authenticated/admin'
     | '/admin/prisijungimas'
@@ -383,6 +395,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   DiagnostikaRoute: typeof DiagnostikaRoute
   MonitoringasRoute: typeof MonitoringasRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ServisasRoute: typeof ServisasRoute
   AdminPrisijungimasRoute: typeof AdminPrisijungimasRoute
   AdminSlaptazodisRoute: typeof AdminSlaptazodisRoute
@@ -425,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/monitoringas'
       fullPath: '/monitoringas'
       preLoaderRoute: typeof MonitoringasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/servisas': {
@@ -655,6 +675,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   DiagnostikaRoute: DiagnostikaRoute,
   MonitoringasRoute: MonitoringasRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ServisasRoute: ServisasRoute,
   AdminPrisijungimasRoute: AdminPrisijungimasRoute,
   AdminSlaptazodisRoute: AdminSlaptazodisRoute,

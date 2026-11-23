@@ -3,9 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ChevronDown, Handshake } from "lucide-react";
+import { ChevronDown, Handshake, KeyRound, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { invitePartner } from "@/lib/users.functions";
+import { invitePartner, sendPartnerPasswordReminder } from "@/lib/users.functions";
 import { PARTNER_STATUSES, canAccess } from "@/lib/admin-roles";
 import { useMyRoles } from "@/lib/use-my-roles";
 import { Empty, PageBody, PageHeader, Panel, Stat, ltDate } from "@/components/admin/ui";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/partneriai")({
   head: () => ({ meta: [
@@ -41,6 +42,9 @@ function PartnersPage() {
   const allowed = canAccess(me.data?.roles ?? [], "partners");
   const qc = useQueryClient();
   const invite = useServerFn(invitePartner);
+  const sendReminder = useServerFn(sendPartnerPasswordReminder);
+  const isAdmin = me.data?.roles.includes("admin") ?? false;
+  const [reminderPartner, setReminderPartner] = useState<{ id: string; company: string; email: string } | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const [f, setF] = useState({ email: "", company: "", contact_name: "", phone: "" });
 
@@ -80,6 +84,11 @@ function PartnersPage() {
     onSuccess: () => { toast.success(`Kvietimas išsiųstas: ${f.email}`); setF({ email: "", company: "", contact_name: "", phone: "" }); refresh(); },
     onError: (e: Error) => toast.error(e.message || "Nepavyko pakviesti"),
   });
+  const reminder = useMutation({
+    mutationFn: (partnerId: string) => sendReminder({ data: { partnerId } }),
+    onSuccess: ({ email }) => { toast.success(`Slaptažodžio atkūrimo nuoroda išsiųsta: ${email}`); setReminderPartner(null); },
+    onError: (e: Error) => toast.error(e.message || "Nepavyko išsiųsti nuorodos"),
+  });
 
   if (!allowed) return <PageBody><Empty title="Neturite prieigos prie šio puslapio" /></PageBody>;
 
@@ -111,7 +120,7 @@ function PartnersPage() {
               const isOpen = open === p.id;
               return (
                 <Panel key={p.id}>
-                  <div className="grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                  <div className="grid min-w-0 gap-3 p-4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-display text-lg font-bold">{p.company || "Be pavadinimo"}</p>
@@ -130,6 +139,9 @@ function PartnersPage() {
                       <Button variant="outline" className="h-11" onClick={() => setOpen(isOpen ? null : p.id)} aria-expanded={isOpen}>
                         Klientai ({mine.length}) <ChevronDown className={cn("ml-1 h-4 w-4 transition-transform", isOpen && "rotate-180")} />
                       </Button>
+                      {isAdmin ? <Button variant="outline" className="h-11" title="Siųsti slaptažodžio priminimą" aria-label={`Siųsti slaptažodžio priminimą: ${p.company}`} disabled={reminder.isPending} onClick={() => setReminderPartner({ id: p.id, company: p.company, email: p.email })}>
+                        <KeyRound className="h-4 w-4" /> Slaptažodžio priminimas
+                      </Button> : null}
                     </div>
                   </div>
                   {isOpen ? (
@@ -167,6 +179,23 @@ function PartnersPage() {
           <p className="mt-4 text-xs text-muted-foreground">Savarankiška registracija: <a href="/partner" target="_blank" rel="noopener noreferrer" className="text-primary underline">sgo.lt/partner</a></p>
         </Panel>
       </PageBody>
+      <AlertDialog open={!!reminderPartner} onOpenChange={(value) => { if (!value && !reminder.isPending) setReminderPartner(null); }}>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Siųsti slaptažodžio priminimą?</AlertDialogTitle>
+            <AlertDialogDescription className="break-words">
+              Rangovui „{reminderPartner?.company}“ ({reminderPartner?.email}) išsiųsime nuorodą naujam slaptažodžiui nustatyti. Dabartinis slaptažodis nesikeis, kol rangovas pats jo neatnaujins.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="h-11" disabled={reminder.isPending}>Atšaukti</AlertDialogCancel>
+            <Button className="h-11" disabled={reminder.isPending} onClick={() => { if (reminderPartner) reminder.mutate(reminderPartner.id); }}>
+              {reminder.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+              {reminder.isPending ? "Siunčiama…" : "Siųsti nuorodą"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

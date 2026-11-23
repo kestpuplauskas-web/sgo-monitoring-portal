@@ -7,3 +7,8 @@
 - [x] Move plans after the problem introduction, ahead of partner and service details.
 - [x] Make plan selection the main opening action and consultation secondary.
 - [x] Verify desktop and phone plan selection.
+
+# Partner password reminder
+- [x] Add administrator-only password recovery sending for a selected contractor.
+- [x] Provide a public recovery page returning the contractor to the partner environment.
+- [x] Test permissions, selected recipient and the sending flow.

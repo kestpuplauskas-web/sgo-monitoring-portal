@@ -88,6 +88,28 @@ export const removeStaff = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const sendPartnerPasswordReminder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ partnerId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { data: partner, error: partnerError } = await context.supabase
+      .from("partners").select("user_id").eq("id", data.partnerId).maybeSingle();
+    if (partnerError || !partner?.user_id) throw new Error("Rangovo paskyra nerasta. Atnaujinkite sąrašą ir bandykite dar kartą.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: account, error: accountError } = await supabaseAdmin.auth.admin.getUserById(partner.user_id);
+    const email = account?.user?.email;
+    if (accountError || !email) throw new Error("Rangovo paskyroje nėra galiojančio el. pašto adreso.");
+    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://sgo.lt/reset-password",
+    });
+    if (error) {
+      if (error.status === 429) throw new Error("Laiškas neseniai jau siųstas. Palaukite kelias minutes ir bandykite dar kartą.");
+      throw new Error("Nepavyko išsiųsti slaptažodžio atkūrimo nuorodos. Bandykite dar kartą vėliau.");
+    }
+    return { ok: true, email };
+  });
+
 export const invitePartner = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) =>

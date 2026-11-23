@@ -39,3 +39,4 @@ use the editor.
 - Site chat (public/chat-widget.js) talks only to /api/public/chat with a per-session secret token; staff read/reply via RLS-protected chat_sessions/chat_messages with realtime, so visitors never touch tables directly.
 - Partners (contractors) live in public.partners + public.partner_clients; self-signup at /partner sets signup_as=partner metadata and an auth.users trigger creates a 'laukiama' partner + partner role, so only staff-approved ('aktyvus') partners can manage clients via RLS (my_active_partner_id).
 - Server-sent emails link to https://sgo.lt, never the request origin, so links never point at preview/localhost hosts.
+- Partner password reminders are administrator-only server actions resolving the recipient from the selected partner's auth account; Auth sends recovery links to the public /reset-password page, so callers cannot target arbitrary addresses or change passwords themselves.
