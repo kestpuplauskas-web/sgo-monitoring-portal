@@ -1171,6 +1171,19 @@
 .pl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;max-width:1240px;margin:0 auto;padding:0 20px}
 @media(max-width:1100px){.pl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.pl-grid{grid-template-columns:1fr}}
+.pl-selection{display:grid;grid-template-columns:minmax(0,420px) auto;justify-content:center;align-items:center;gap:32px;max-width:1240px;margin:0 auto;padding:0 20px}
+.pl-selection .pl-grid{width:100%;padding:0}
+.pl-selection:not(.is-expanded) .pl-grid{grid-template-columns:minmax(0,1fr)}
+.pl-selection:not(.is-expanded) .pl-card:nth-child(n+2){display:none}
+.pl-selection.is-expanded{display:block}
+.pl-options{text-align:center}
+.pl-selection.is-expanded .pl-options{margin-top:24px}
+.pl-expand{min-height:48px;max-width:100%;gap:12px;white-space:normal;text-align:center;color:var(--brand-mist);cursor:pointer}
+.pl-expand svg{flex:none;transition:transform .2s ease}
+.pl-expand[aria-expanded="true"] svg{transform:rotate(180deg)}
+.pl-expand:focus-visible{outline:2px solid var(--brand-signal);outline-offset:4px}
+@media(max-width:620px){.pl-selection{grid-template-columns:minmax(0,420px);gap:20px}.pl-selection.is-expanded .pl-grid{gap:28px}}
+@media(prefers-reduced-motion:reduce){.pl-expand svg{transition:none}}
 .pl-card{position:relative;display:flex;flex-direction:column;background:rgba(16,30,44,.72);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 22px 22px}
 .pl-card--rec{border-color:var(--brand-signal);box-shadow:0 0 40px rgba(31,184,148,.16);background:linear-gradient(165deg,rgba(31,184,148,.12),rgba(16,30,44,.85) 60%)}
 .pl-badge{position:absolute;top:-12px;left:22px;background:var(--brand-signal);color:#052620;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:999px}
@@ -1244,7 +1257,8 @@
     <ul><li>Huawei</li><li>Solis</li><li>Fronius</li><li>SMA</li><li>Deye</li><li>Growatt</li><li>SolarEdge</li><li>FoxESS</li><li>GoodWe</li><li>Sungrow</li></ul>
     <p class="pl-brands-n">Nematote savo gamintojo? <a href="#kontaktai">Parašykite</a> – patikrinsime nemokamai.</p>
   </div>
-  <div class="pl-grid">
+  <div class="pl-selection" id="pl-selection">
+  <div class="pl-grid" id="pl-plan-options">
     <article class="pl-card">
       <h3 class="pl-name">SGO Startas</h3>
       <div class="pl-price"><b>0 €</b><span>/ mėn.</span></div>
@@ -1283,6 +1297,13 @@
       <p class="pl-act">Vienkartinis aktyvavimas – 9 €</p>
       <button type="button" class="btn btn-ghost pl-btn" data-plan="Ramybė" data-price="19 € / mėn.">Pasirinkti planą</button>
     </article>
+  </div>
+  <div class="pl-options">
+    <button type="button" class="btn btn-ghost pl-expand" id="pl-expand" aria-expanded="false" aria-controls="pl-plan-options">
+      <span>Noriu platesnio plano</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+  </div>
   </div>
   <ul class="pl-trust reveal">
     <li><span aria-hidden="true">✓</span><div><b>Pajungiame nuotoliu</b>Meistro vizito į namus nereikia.</div></li>
@@ -1347,6 +1368,14 @@
 <script>
 (function(){
   var m=document.getElementById('pl-modal'),f=document.getElementById('pl-form'),grid=document.querySelector('#planai .pl-grid'),last=null,cur=null;
+  var selection=document.getElementById('pl-selection'),expand=document.getElementById('pl-expand');
+  expand.addEventListener('click',function(){
+    var expanded=expand.getAttribute('aria-expanded')!=='true';
+    selection.classList.toggle('is-expanded',expanded);
+    expand.setAttribute('aria-expanded',String(expanded));
+    expand.querySelector('span').textContent=expanded?'Slėpti platesnius planus':'Noriu platesnio plano';
+    if(!expanded)selection.scrollIntoView({block:'start',behavior:'instant'});
+  });
   document.body.appendChild(m);
   function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function eur(n){n=Number(n||0);return (Number.isInteger(n)?String(n):n.toFixed(2).replace('.',','))+' €'}
