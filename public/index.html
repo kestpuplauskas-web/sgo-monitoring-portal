@@ -1171,18 +1171,31 @@
 .pl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;max-width:1240px;margin:0 auto;padding:0 20px}
 @media(max-width:1100px){.pl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.pl-grid{grid-template-columns:1fr}}
-.pl-selection{display:grid;grid-template-columns:minmax(0,420px) auto;justify-content:center;align-items:center;gap:32px;max-width:1240px;margin:0 auto;padding:0 20px}
 .pl-selection .pl-grid{width:100%;padding:0}
+.pl-selection{display:grid;grid-template-columns:minmax(0,400px) minmax(0,480px);justify-content:center;align-items:stretch;gap:24px;max-width:1240px;margin:0 auto;padding:0 20px}
+.pl-options{display:flex;flex-direction:column;justify-content:center;gap:20px;text-align:left;padding:32px 28px;border:1px dashed rgba(31,184,148,.35);border-radius:16px;background:linear-gradient(160deg,rgba(31,184,148,.08),rgba(16,30,44,.4) 70%)}
+.pl-selection.is-expanded .pl-options{border:0;background:none;padding:0;align-items:center}
+.pl-selection.is-expanded .pl-teaser{display:none}
+.pl-teaser-k{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--brand-signal)}
+.pl-teaser h3{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;line-height:1.25;margin-top:10px;color:#fff}
+.pl-teaser p{margin-top:10px;font-size:14.5px;color:var(--brand-slate)}
+.pl-teaser-l{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:8px}
+.pl-teaser-l li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13.5px}
+.pl-teaser-l li.is-rec{border-color:var(--brand-signal);background:rgba(31,184,148,.1)}
+.pl-teaser-l b{color:#fff}.pl-teaser-l span{color:var(--brand-slate)}
+.pl-teaser-l em{font-style:normal;font-weight:700;color:#fff;font-family:"Archivo",sans-serif}
+.pl-teaser-l s{color:var(--brand-slate);font-weight:400;font-size:12px;margin-left:4px}
+#pl-selection:not(.is-expanded) .pl-options .pl-expand{width:100%;justify-content:center;background:var(--brand-signal);color:#052620;border:0;font-weight:700}
+@media(max-width:860px){.pl-selection{grid-template-columns:minmax(0,480px)}.pl-teaser-l span{display:none}.pl-teaser-l li{grid-template-columns:1fr auto}}
 .pl-selection:not(.is-expanded) .pl-grid{grid-template-columns:minmax(0,1fr)}
 .pl-selection:not(.is-expanded) .pl-card:nth-child(n+2){display:none}
 .pl-selection.is-expanded{display:block}
-.pl-options{text-align:center}
 .pl-selection.is-expanded .pl-options{margin-top:24px}
 .pl-expand{min-height:48px;max-width:100%;gap:12px;white-space:normal;text-align:center;color:var(--brand-mist);cursor:pointer}
 .pl-expand svg{flex:none;transition:transform .2s ease}
 .pl-expand[aria-expanded="true"] svg{transform:rotate(180deg)}
 .pl-expand:focus-visible{outline:2px solid var(--brand-signal);outline-offset:4px}
-@media(max-width:620px){.pl-selection{grid-template-columns:minmax(0,420px);gap:20px}.pl-selection.is-expanded .pl-grid{gap:28px}}
+@media(max-width:620px){.pl-selection{gap:20px}.pl-selection.is-expanded .pl-grid{gap:28px}}
 @media(prefers-reduced-motion:reduce){.pl-expand svg{transition:none}}
 .pl-card{position:relative;display:flex;flex-direction:column;background:rgba(16,30,44,.72);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 22px 22px}
 .pl-card--rec{border-color:var(--brand-signal);box-shadow:0 0 40px rgba(31,184,148,.16);background:linear-gradient(165deg,rgba(31,184,148,.12),rgba(16,30,44,.85) 60%)}
@@ -1299,6 +1312,16 @@
     </article>
   </div>
   <div class="pl-options">
+    <div class="pl-teaser">
+      <span class="pl-teaser-k">PLATESNĖ APSAUGA</span>
+      <h3>Norite, kad gedimus pastebėtume ir spręstume už jus?</h3>
+      <p>Aukštesni planai prideda 24/7 įspėjimus, diagnostiką ir garantinių atvejų koordinavimą.</p>
+      <ul class="pl-teaser-l">
+        <li><b>Dėmesys</b><span>24/7 įspėjimai</span><em>5 €</em></li>
+        <li class="is-rec"><b>Saugumas</b><span>Diagnostika ir apžiūra</span><em>9 € <s>15 €</s></em></li>
+        <li><b>Ramybė</b><span>Prioritetinė pagalba</span><em>19 €</em></li>
+      </ul>
+    </div>
     <button type="button" class="btn btn-ghost pl-expand" id="pl-expand" aria-expanded="false" aria-controls="pl-plan-options">
       <span>Noriu platesnio plano</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
